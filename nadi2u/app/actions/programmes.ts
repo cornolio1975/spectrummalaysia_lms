@@ -17,12 +17,11 @@ export async function getProgrammes() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching programmes:", error);
-    return { error: error.message };
+    return { error: error.message || String(error) };
   }
 
   // Supabase returns count as an array of objects like { count: number }
-  const formattedData = data.map((prog: any) => ({
+  const formattedData = (data || []).map((prog: any) => ({
     ...prog,
     moduleCount: prog.programme_modules?.[0]?.count || 0
   }));
