@@ -12,7 +12,7 @@ export async function getSessions(eventId: string) {
     .select(`
       *,
       trainers (
-        profiles (full_name)
+        name
       )
     `)
     .eq("event_id", eventId)

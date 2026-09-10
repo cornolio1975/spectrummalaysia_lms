@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { getProgrammeModules } from "@/app/actions/modules";
+import { getQuizzes } from "@/app/actions/quizzes";
 import { CurriculumBuilder } from "@/components/dashboard/curriculum-builder";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,9 +9,10 @@ export default async function ProgrammeDetailsPage({ params }: { params: { id: s
   const { id } = await params;
   const supabase = await createClient();
 
-  const [progRes, modulesRes] = await Promise.all([
+  const [progRes, modulesRes, quizzesRes] = await Promise.all([
     supabase.from("programmes").select("*").eq("id", id).single(),
-    getProgrammeModules(id)
+    getProgrammeModules(id),
+    getQuizzes(id)
   ]);
 
   if (progRes.error || !progRes.data) {
@@ -19,6 +21,7 @@ export default async function ProgrammeDetailsPage({ params }: { params: { id: s
 
   const programme = progRes.data;
   const modules = modulesRes.data || [];
+  const quizzes = quizzesRes.data || [];
 
   return (
     <div>
@@ -59,7 +62,7 @@ export default async function ProgrammeDetailsPage({ params }: { params: { id: s
         </div>
 
         {/* Curriculum Builder */}
-        <CurriculumBuilder programmeId={id} modules={modules} />
+        <CurriculumBuilder programmeId={id} modules={modules} quizzes={quizzes} />
       </div>
     </div>
   );

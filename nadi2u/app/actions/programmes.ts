@@ -13,7 +13,7 @@ export async function getProgrammes() {
       *,
       programme_modules (count)
     `)
-    .eq("deleted_at", null)
+    .is("deleted_at", null)
     .order("created_at", { ascending: false });
 
   if (error) {

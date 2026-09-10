@@ -35,7 +35,7 @@ export function NadiForm({ initialData, states, onSuccess, onCancel }: NadiFormP
     },
   });
 
-  const onSubmit = async (data: NadiFormData) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     setError(null);
 

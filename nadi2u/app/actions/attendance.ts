@@ -24,7 +24,7 @@ export async function getSessionAttendance(sessionId: string) {
     .select(`
       participant_id,
       participants (
-        profiles (full_name)
+        full_name
       )
     `)
     .eq("event_id", session.event_id)
@@ -45,7 +45,7 @@ export async function getSessionAttendance(sessionId: string) {
   
   const formattedData = registrations.map(reg => ({
     participant_id: reg.participant_id,
-    full_name: reg.participants?.profiles?.full_name || "Unknown",
+    full_name: reg.participants?.full_name || "Unknown",
     status: attendanceMap.get(reg.participant_id) || null // null means not recorded yet
   }));
 

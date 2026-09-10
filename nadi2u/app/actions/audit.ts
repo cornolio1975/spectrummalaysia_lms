@@ -8,14 +8,12 @@ export async function getAuditLogs(limit = 100) {
   const { data, error } = await supabase
     .from("audit_logs")
     .select(`
-      *,
-      profiles:user_id (full_name, role)
+      *
     `)
     .order("created_at", { ascending: false })
     .limit(limit);
 
   if (error) {
-    console.error("Error fetching audit logs:", error);
     return { error: error.message };
   }
 

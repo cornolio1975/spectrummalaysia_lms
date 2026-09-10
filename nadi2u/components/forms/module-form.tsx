@@ -24,7 +24,7 @@ export function ModuleForm({ programmeId, initialData, onSuccess, onCancel }: Mo
     defaultValues: initialData || {
       title: "",
       description: "",
-      sequence: 1,
+      sort_order: 0,
       status: "draft",
     },
   });
@@ -65,8 +65,8 @@ export function ModuleForm({ programmeId, initialData, onSuccess, onCancel }: Mo
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Sequence (Order)</label>
-          <input type="number" {...register("sequence", { valueAsNumber: true })} className="form-input w-full" min="1" />
-          {errors.sequence && <p className="text-red-500 text-xs mt-1">{errors.sequence.message}</p>}
+          <input type="number" {...register("sort_order", { valueAsNumber: true })} className="form-input w-full" min="0" />
+          {errors.sort_order && <p className="text-red-500 text-xs mt-1">{errors.sort_order.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>

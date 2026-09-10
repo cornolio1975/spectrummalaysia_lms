@@ -14,7 +14,9 @@ export async function getEventRegistrations(eventId: string) {
       created_at,
       participants (
         id,
-        profiles (full_name, phone, email)
+        full_name,
+        phone,
+        email
       )
     `)
     .eq("event_id", eventId)

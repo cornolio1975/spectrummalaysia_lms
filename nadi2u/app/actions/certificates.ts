@@ -11,7 +11,7 @@ export async function getCertificates() {
     .select(`
       *,
       participants (
-        profiles (full_name)
+        full_name
       ),
       programmes (
         programme_name
@@ -35,7 +35,7 @@ export async function getCertificateByNo(certificateNo: string) {
     .select(`
       *,
       participants (
-        profiles (full_name, phone)
+        full_name, phone
       ),
       programmes (
         programme_name,
@@ -68,13 +68,16 @@ export async function issueCertificate(participantId: string, programmeId: strin
     return { error: "Participant already has an active certificate for this programme." };
   }
 
+  const certNo = `NADI2U-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
+
   const { data, error } = await supabase
     .from("certificates")
     .insert([{
+      certificate_no: certNo,
       participant_id: participantId,
       programme_id: programmeId,
       status: "issued",
-      issue_date: new Date().toISOString()
+      issue_date: new Date().toISOString().split("T")[0]
     }])
     .select()
     .single();

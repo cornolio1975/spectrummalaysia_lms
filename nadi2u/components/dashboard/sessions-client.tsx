@@ -69,10 +69,11 @@ export function SessionsClient({ eventId, sessions, trainers }: SessionsClientPr
                 <td style={{ fontWeight: 500 }}>{new Date(session.session_date).toLocaleDateString()}</td>
                 <td>{session.start_time.substring(0, 5)} - {session.end_time.substring(0, 5)}</td>
                 <td>{session.session_name}</td>
-                <td>{session.trainers?.profiles?.full_name || "-"}</td>
+                <td>{session.trainers?.name || "-"}</td>
                 <td><span className={`badge ${getStatusBadge(session.status)}`}>{session.status.replace('_', ' ')}</span></td>
                 <td>
                   <div style={{ display: "flex", gap: "6px" }}>
+                    <button className="btn btn-outline btn-sm" onClick={() => router.push(`/events/sessions/${session.id}/attendance`)}>Attendance</button>
                     <button className="btn btn-ghost btn-sm" onClick={() => handleOpenEdit(session)}>Edit</button>
                     <button className="btn btn-ghost btn-sm text-red-500" onClick={() => handleDelete(session.id)}>Delete</button>
                   </div>

@@ -86,8 +86,8 @@ export default async function VerifyCertificatePage({ params }: { params: { cert
               <div>
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Participant Details</h3>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="font-semibold text-lg text-gray-900">{cert.participants?.profiles?.full_name}</p>
-                  <p className="text-sm text-gray-600 mt-1">{cert.participants?.profiles?.phone || "No phone registered"}</p>
+                  <p className="font-semibold text-lg text-gray-900">{cert.participants?.full_name}</p>
+                  <p className="text-sm text-gray-600 mt-1">{cert.participants?.phone || "No phone registered"}</p>
                 </div>
               </div>
 

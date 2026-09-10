@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 interface SessionFormProps {
   eventId: string;
   initialData?: SessionFormData & { id: string };
-  trainers: { id: string; profiles: { full_name: string } }[];
+  trainers: { id: string; name: string }[];
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -29,7 +29,6 @@ export function SessionForm({ eventId, initialData, trainers, onSuccess, onCance
       end_time: (initialData as any).end_time,
       trainer_id: (initialData as any).trainer_id || "",
       status: (initialData as any).status || "scheduled",
-      status: initialData.status,
     } : {
       session_name: "",
       session_date: "",
@@ -40,7 +39,7 @@ export function SessionForm({ eventId, initialData, trainers, onSuccess, onCance
     },
   });
 
-  const onSubmit = async (data: SessionFormData) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     setError(null);
 
@@ -92,7 +91,7 @@ export function SessionForm({ eventId, initialData, trainers, onSuccess, onCance
           <select {...register("trainer_id")} className="form-select w-full">
             <option value="">None Assigned</option>
             {trainers.map(trainer => (
-              <option key={trainer.id} value={trainer.id}>{trainer.profiles?.full_name}</option>
+              <option key={trainer.id} value={trainer.id}>{trainer.name}</option>
             ))}
           </select>
           {errors.trainer_id && <p className="text-red-500 text-xs mt-1">{errors.trainer_id.message}</p>}

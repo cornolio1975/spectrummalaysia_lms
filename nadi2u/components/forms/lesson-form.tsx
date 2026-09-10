@@ -25,9 +25,8 @@ export function LessonForm({ programmeId, moduleId, initialData, onSuccess, onCa
     defaultValues: initialData || {
       title: "",
       description: "",
-      content_type: "video",
-      sequence: 1,
-      is_required: true,
+      sort_order: 0,
+      is_mandatory: true,
       status: "draft",
     },
   });
@@ -67,29 +66,16 @@ export function LessonForm({ programmeId, moduleId, initialData, onSuccess, onCa
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Content Type</label>
-          <select {...register("content_type")} className="form-select w-full">
-            <option value="video">Video</option>
-            <option value="pdf">PDF Document</option>
-            <option value="powerpoint">PowerPoint</option>
-            <option value="word">Word Document</option>
-            <option value="text">Text / Article</option>
-            <option value="quiz">Quiz</option>
-            <option value="assessment">Assessment</option>
-            <option value="external">External Link</option>
-          </select>
-        </div>
-        <div>
           <label className="block text-sm font-medium mb-1">Estimated Duration (mins)</label>
-          <input type="number" {...register("duration_minutes", { valueAsNumber: true })} className="form-input w-full" min="1" />
+          <input type="number" {...register("duration_min", { valueAsNumber: true })} className="form-input w-full" min="1" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Sequence (Order)</label>
-          <input type="number" {...register("sequence", { valueAsNumber: true })} className="form-input w-full" min="1" />
-          {errors.sequence && <p className="text-red-500 text-xs mt-1">{errors.sequence.message}</p>}
+          <input type="number" {...register("sort_order", { valueAsNumber: true })} className="form-input w-full" min="0" />
+          {errors.sort_order && <p className="text-red-500 text-xs mt-1">{errors.sort_order.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1">Status</label>
@@ -102,7 +88,7 @@ export function LessonForm({ programmeId, moduleId, initialData, onSuccess, onCa
       </div>
 
       <div className="p-4 bg-gray-50 rounded-lg border flex items-center gap-2">
-        <input type="checkbox" {...register("is_required")} id="isRequired" />
+        <input type="checkbox" {...register("is_mandatory")} id="isRequired" />
         <label htmlFor="isRequired" className="text-sm font-medium">This lesson is required for module completion</label>
       </div>
 

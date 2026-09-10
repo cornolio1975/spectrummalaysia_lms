@@ -33,7 +33,7 @@ export function ProgrammeForm({ initialData, onSuccess, onCancel }: ProgrammeFor
     },
   });
 
-  const onSubmit = async (data: ProgrammeFormData) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     setError(null);
 

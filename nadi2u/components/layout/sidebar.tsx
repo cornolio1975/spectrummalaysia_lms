@@ -35,7 +35,10 @@ const NAV_STRUCTURE: NavItem[] = [
   {
     icon: "📅",
     label: "Events",
-    href: "/events",
+    children: [
+      { label: "Events", href: "/events" },
+      { label: "Trainers", href: "/events/trainers" },
+    ],
   },
   {
     icon: "🗂",
@@ -48,10 +51,19 @@ const NAV_STRUCTURE: NavItem[] = [
     href: "/certificates",
   },
   {
+    icon: "🎥",
+    label: "Live Training",
+    children: [
+      { label: "Live Classes", href: "/live-classes" },
+      { label: "My Classes", href: "/my-classes" },
+    ],
+  },
+  {
     icon: "📋",
     label: "Reports",
     children: [
       { label: "KPIs", href: "/reports/kpis" },
+      { label: "Live Training", href: "/reports/live-training" },
     ],
   },
   {
@@ -59,6 +71,8 @@ const NAV_STRUCTURE: NavItem[] = [
     label: "Administration",
     children: [
       { label: "Audit Logs", href: "/admin/audit" },
+      { label: "System Settings", href: "/admin/settings" },
+      { label: "Google Integration", href: "/admin/google" },
     ],
   },
 ];

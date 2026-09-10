@@ -14,8 +14,8 @@ export async function getProgrammeModules(programmeId: string) {
       lessons (*)
     `)
     .eq("programme_id", programmeId)
-    .order("sequence", { ascending: true })
-    // Also order lessons by sequence via postgrest if possible, but we'll sort in UI if needed
+    .order("sort_order", { ascending: true })
+    // Also order lessons by sort_order via postgrest if possible, but we'll sort in UI if needed
   ;
 
   if (error) {
@@ -26,7 +26,7 @@ export async function getProgrammeModules(programmeId: string) {
   // Sort lessons within modules
   data?.forEach(module => {
     if (module.lessons) {
-      module.lessons.sort((a: any, b: any) => a.sequence - b.sequence);
+      module.lessons.sort((a: any, b: any) => a.sort_order - b.sort_order);
     }
   });
 
