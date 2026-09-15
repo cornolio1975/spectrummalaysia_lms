@@ -6,7 +6,8 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "git push origin main"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
