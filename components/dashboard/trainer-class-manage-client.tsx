@@ -37,7 +37,7 @@ export function TrainerClassManageClient({ liveClass, attendance }: TrainerClass
   };
 
   const handleAttendanceChange = (participantId: string, status: string) => {
-    setLocalAttendance(prev => ({ ...prev, [participantId]: status }));
+    setLocalAttendance((prev: Record<string, string>) => ({ ...prev, [participantId]: status }));
   };
 
   const saveAttendance = async () => {

@@ -20,7 +20,7 @@ export function NadiForm({ initialData, states, onSuccess, onCancel }: NadiFormP
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<NadiFormData>({
-    resolver: zodResolver(nadiSchema),
+    resolver: zodResolver(nadiSchema) as any,
     defaultValues: (initialData as any) || {
       nadi_code: "",
       nadi_name: "",

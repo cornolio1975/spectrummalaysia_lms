@@ -4,7 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import { PrintButton } from "@/components/ui/print-button";
 
-export default async function ViewCertificatePage({ params }: { params: { id: string } }) {
+export default async function ViewCertificatePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   // We don't have a direct getCertificateById exported right now, let's fetch directly.

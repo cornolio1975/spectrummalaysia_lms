@@ -4,7 +4,7 @@ import { AttendanceClient } from "@/components/dashboard/attendance-client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function AttendancePage({ params }: { params: { id: string } }) {
+export default async function AttendancePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
 

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 
-export default async function TakeQuizPage({ params }: { params: { id: string } }) {
+export default async function TakeQuizPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { quiz, questions, error } = await getQuizWithQuestions(id);
 

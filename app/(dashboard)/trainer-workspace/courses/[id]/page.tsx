@@ -3,8 +3,8 @@ import { getTrainerWorkspace, verifyTrainerOwnership } from '@/services/trainer-
 import { createClient } from '@/utils/supabase/server';
 import Link from 'next/link';
 
-export default async function TrainerCourseManagePage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function TrainerCourseManagePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   let errorMsg = null;
   let course: any = null;
   let modules: any[] = [];

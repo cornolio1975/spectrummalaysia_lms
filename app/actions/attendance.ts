@@ -43,11 +43,14 @@ export async function getSessionAttendance(sessionId: string) {
   // Combine them
   const attendanceMap = new Map(attendanceRecords.map(a => [a.participant_id, a.status]));
   
-  const formattedData = registrations.map(reg => ({
-    participant_id: reg.participant_id,
-    full_name: reg.participants?.full_name || "Unknown",
-    status: attendanceMap.get(reg.participant_id) || null // null means not recorded yet
-  }));
+  const formattedData = registrations.map(reg => {
+    const participantObj = Array.isArray(reg.participants) ? reg.participants[0] : (reg.participants as any);
+    return {
+      participant_id: reg.participant_id,
+      full_name: participantObj?.full_name || "Unknown",
+      status: attendanceMap.get(reg.participant_id) || null // null means not recorded yet
+    };
+  });
 
   return { data: formattedData };
 }

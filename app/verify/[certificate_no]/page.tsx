@@ -2,7 +2,7 @@ import { getCertificateByNo } from "@/app/actions/certificates";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-export async function generateMetadata({ params }: { params: { certificate_no: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ certificate_no: string }> }): Promise<Metadata> {
   // Await the params object
   const { certificate_no } = await params;
   return {
@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: { certificate_no: s
   };
 }
 
-export default async function VerifyCertificatePage({ params }: { params: { certificate_no: string } }) {
+export default async function VerifyCertificatePage({ params }: { params: Promise<{ certificate_no: string }> }) {
   // Await the params object
   const { certificate_no } = await params;
   

@@ -21,7 +21,7 @@ export function LessonForm({ programmeId, moduleId, initialData, onSuccess, onCa
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<LessonFormData>({
-    resolver: zodResolver(lessonSchema),
+    resolver: zodResolver(lessonSchema) as any,
     defaultValues: initialData || {
       title: "",
       description: "",

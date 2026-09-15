@@ -19,7 +19,7 @@ export function ProgrammeForm({ initialData, onSuccess, onCancel }: ProgrammeFor
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<ProgrammeFormData>({
-    resolver: zodResolver(programmeSchema),
+    resolver: zodResolver(programmeSchema) as any,
     defaultValues: (initialData as any) || {
       programme_code: "",
       programme_name: "",

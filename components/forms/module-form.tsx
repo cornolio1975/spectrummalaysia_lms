@@ -20,7 +20,7 @@ export function ModuleForm({ programmeId, initialData, onSuccess, onCancel }: Mo
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<ModuleFormData>({
-    resolver: zodResolver(moduleSchema),
+    resolver: zodResolver(moduleSchema) as any,
     defaultValues: initialData || {
       title: "",
       description: "",

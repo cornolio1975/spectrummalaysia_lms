@@ -53,7 +53,7 @@ export function SettingsClient({ settings }: SettingsClientProps) {
           </div>
         ) : (
           <div className="space-y-8">
-            {Object.entries(groupedSettings).map(([category, catSettings]) => (
+            {(Object.entries(groupedSettings) as [string, any[]][]).map(([category, catSettings]) => (
               <div key={category} className="card max-w-4xl p-0 overflow-hidden">
                 <div className="bg-gray-50 p-4 border-b">
                   <h2 className="font-bold text-gray-800 capitalize">{category.replace(/_/g, ' ')} Settings</h2>

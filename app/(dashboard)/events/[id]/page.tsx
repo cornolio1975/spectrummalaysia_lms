@@ -5,7 +5,7 @@ import { SessionsClient } from "@/components/dashboard/sessions-client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export default async function EventDetailsPage({ params }: { params: { id: string } }) {
+export default async function EventDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   // Await the params object in Next.js 15+
   const { id } = await params;
 

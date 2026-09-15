@@ -21,7 +21,7 @@ export function SessionForm({ eventId, initialData, trainers, onSuccess, onCance
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<SessionFormData>({
-    resolver: zodResolver(sessionSchema),
+    resolver: zodResolver(sessionSchema) as any,
     defaultValues: initialData ? {
       session_name: (initialData as any).session_name,
       session_date: new Date((initialData as any).session_date).toISOString().split('T')[0],

@@ -21,7 +21,7 @@ export function EventForm({ initialData, programmes, nadiSites, onSuccess, onCan
   const router = useRouter();
 
   const { register, handleSubmit, formState: { errors } } = useForm<EventFormData>({
-    resolver: zodResolver(eventSchema),
+    resolver: zodResolver(eventSchema) as any,
     defaultValues: initialData ? {
       programme_id: initialData.programme_id,
       nadi_id: initialData.nadi_id,
