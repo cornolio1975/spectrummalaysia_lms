@@ -23,6 +23,8 @@ RETURNS UUID LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
   SELECT nadi_id FROM public.profiles WHERE id = (SELECT auth.uid());
 $$;
 
+-- Ensure trainers has profile_id column for user mapping
+ALTER TABLE trainers ADD COLUMN IF NOT EXISTS profile_id UUID REFERENCES auth.users(id);
 
 -- ─── 2. ENABLE RLS ON ALL TABLES ───────────────────────────────────────────
 ALTER TABLE states ENABLE ROW LEVEL SECURITY;
@@ -76,9 +78,6 @@ END $$;
 
 
 -- ─── 4. APPLY OPTIMIZED POLICIES ───────────────────────────────────────────
-
--- Helper definition for "Any logged in user can read"
--- USING (auth.uid() IS NOT NULL)
 
 -- ================= GLOBAL CONFIGURATION =================
 
@@ -311,9 +310,6 @@ DROP POLICY IF EXISTS "assessment_results_write_admin" ON assessment_results;
 CREATE POLICY "assessment_results_write_admin" ON assessment_results FOR ALL USING ((SELECT auth_role()) IN ('super_admin', 'programme_admin'));
 
 -- ================= DEFAULT FALLBACK FOR ALL OTHER TABLES =================
--- (For any tables left without specific granular policies, enable read-only for authenticated, write for super_admin)
--- E.g. audit_logs, certificate_templates, certificates, media, participant_programmes, etc.
-
 DO $$ 
 DECLARE 
   t text;

@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
+import { getUserNotifications, markNotificationAsRead } from "@/app/actions/notifications";
+import { universalGlobalSearch, GlobalSearchResult } from "@/app/actions/search";
+import Link from "next/link";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -19,6 +22,29 @@ export default function Topbar({
 }: TopbarProps) {
   const router = useRouter();
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  // Universal Global Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<GlobalSearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  useEffect(() => {
+    getUserNotifications().then((res) => {
+      if (res.data) setNotifications(res.data);
+    });
+  }, []);
+
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+  const handleMarkRead = async (id: string) => {
+    await markNotificationAsRead(id);
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, is_read: true } : n))
+    );
+  };
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -47,15 +73,85 @@ export default function Topbar({
         <span style={{ fontSize: "18px" }}>☰</span>
       </button>
 
-      {/* Search bar */}
-      <div className="search-input-wrap" style={{ maxWidth: "380px" }}>
+      {/* Universal Global Search */}
+      <div className="search-input-wrap" style={{ maxWidth: "380px", position: "relative" }}>
         <span className="search-icon" style={{ fontSize: "13px" }}>🔍</span>
         <input
           type="search"
           className="form-input"
-          placeholder="Search participants, programmes, events…"
+          value={searchQuery}
+          onChange={async (e) => {
+            const q = e.target.value;
+            setSearchQuery(q);
+            if (q.trim().length >= 2) {
+              setIsSearching(true);
+              setShowSearchDropdown(true);
+              const res = await universalGlobalSearch(q);
+              setSearchResults(res.data || []);
+              setIsSearching(false);
+            } else {
+              setSearchResults([]);
+              setShowSearchDropdown(false);
+            }
+          }}
+          onFocus={() => {
+            if (searchResults.length > 0) setShowSearchDropdown(true);
+          }}
+          placeholder="Global Search (courses, learners, certs...)"
           style={{ fontSize: "0.82rem", padding: "7px 12px 7px 32px" }}
         />
+
+        {showSearchDropdown && (
+          <div
+            style={{
+              position: "absolute",
+              top: "calc(100% + 4px)",
+              left: 0,
+              right: 0,
+              background: "var(--surface, #fff)",
+              border: "1px solid var(--border, #e5e7eb)",
+              borderRadius: "8px",
+              boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)",
+              zIndex: 100,
+              maxHeight: "320px",
+              overflowY: "auto",
+            }}
+          >
+            {isSearching ? (
+              <div style={{ padding: "12px", fontSize: "0.75rem", color: "var(--text-muted, #6b7280)", textAlign: "center" }}>
+                Searching LMS registry...
+              </div>
+            ) : searchResults.length === 0 ? (
+              <div style={{ padding: "12px", fontSize: "0.75rem", color: "var(--text-muted, #6b7280)", textAlign: "center" }}>
+                No results found for &quot;{searchQuery}&quot;
+              </div>
+            ) : (
+              searchResults.map((item) => (
+                <Link
+                  key={`${item.category}-${item.id}`}
+                  href={item.href}
+                  onClick={() => setShowSearchDropdown(false)}
+                  style={{
+                    display: "block",
+                    padding: "8px 12px",
+                    borderBottom: "1px solid var(--border, #f3f4f6)",
+                    textDecoration: "none",
+                    color: "inherit",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-hover, #f9fafb)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                >
+                  <div style={{ fontSize: "0.8rem", fontWeight: "bold", color: "var(--text-main, #111827)" }}>
+                    {item.title}
+                  </div>
+                  <div style={{ fontSize: "0.7rem", color: "var(--text-muted, #6b7280)" }}>
+                    {item.subtitle}
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {/* Right side */}
@@ -76,25 +172,119 @@ export default function Topbar({
         </div>
 
         {/* Notifications */}
-        <button
-          className="btn btn-ghost btn-icon"
-          aria-label="Notifications"
-          style={{ position: "relative" }}
-        >
-          <span style={{ fontSize: "16px" }}>🔔</span>
-          <span
-            style={{
-              position: "absolute",
-              top: "4px",
-              right: "4px",
-              width: "7px",
-              height: "7px",
-              background: "var(--danger)",
-              borderRadius: "50%",
-              border: "1.5px solid #fff",
-            }}
-          />
-        </button>
+        <div style={{ position: "relative" }}>
+          <button
+            onClick={() => setShowNotifications((v) => !v)}
+            className="btn btn-ghost btn-icon"
+            aria-label="Notifications"
+            style={{ position: "relative" }}
+          >
+            <span style={{ fontSize: "16px" }}>🔔</span>
+            {unreadCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "2px",
+                  right: "2px",
+                  minWidth: "14px",
+                  height: "14px",
+                  padding: "0 3px",
+                  background: "var(--danger)",
+                  color: "#fff",
+                  fontSize: "9px",
+                  fontWeight: "bold",
+                  borderRadius: "7px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {showNotifications && (
+            <div
+              style={{
+                position: "absolute",
+                top: "calc(100% + 8px)",
+                right: 0,
+                width: "320px",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: "0 10px 25px -5px rgba(0,0,0,0.1)",
+                zIndex: 100,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  padding: "10px 14px",
+                  borderBottom: "1px solid var(--border)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontSize: "0.8rem", fontWeight: "bold" }}>In-App Notifications</span>
+                <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                  {unreadCount} unread
+                </span>
+              </div>
+
+              <div style={{ maxHeight: "280px", overflowY: "auto" }}>
+                {notifications.length === 0 ? (
+                  <div style={{ padding: "20px", textAlign: "center", fontSize: "0.75rem", color: "var(--text-muted)" }}>
+                    No notifications yet.
+                  </div>
+                ) : (
+                  notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      style={{
+                        padding: "10px 14px",
+                        borderBottom: "1px solid var(--border)",
+                        background: n.is_read ? "transparent" : "rgba(79, 70, 229, 0.04)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "2px",
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <span style={{ fontSize: "0.75rem", fontWeight: n.is_read ? "normal" : "bold" }}>
+                          {n.title}
+                        </span>
+                        {!n.is_read && (
+                          <button
+                            onClick={() => handleMarkRead(n.id)}
+                            style={{
+                              border: "none",
+                              background: "none",
+                              color: "var(--primary)",
+                              fontSize: "0.65rem",
+                              cursor: "pointer",
+                              fontWeight: "600",
+                            }}
+                          >
+                            Mark Read
+                          </button>
+                        )}
+                      </div>
+                      <p style={{ fontSize: "0.7rem", color: "var(--text-muted)", margin: 0 }}>
+                        {n.message}
+                      </p>
+                      <span style={{ fontSize: "0.65rem", color: "var(--text-muted)", marginTop: "2px" }}>
+                        {new Date(n.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* User menu */}
         <div style={{ position: "relative" }}>

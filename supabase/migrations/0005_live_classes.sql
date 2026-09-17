@@ -6,44 +6,54 @@
 
 -- ─── ENUMS ────────────────────────────────────────────────────────────────
 
-CREATE TYPE live_class_status AS ENUM (
-  'draft',
-  'scheduled',
-  'live',
-  'completed',
-  'cancelled'
-);
+DO $$ BEGIN
+  CREATE TYPE live_class_status AS ENUM (
+    'draft',
+    'scheduled',
+    'live',
+    'completed',
+    'cancelled'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TYPE live_attendance_status AS ENUM (
-  'present',
-  'late',
-  'absent',
-  'excused',
-  'unknown'
-);
+DO $$ BEGIN
+  CREATE TYPE live_attendance_status AS ENUM (
+    'present',
+    'late',
+    'absent',
+    'excused',
+    'unknown'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TYPE attendance_source AS ENUM (
-  'manual',
-  'google',
-  'system'
-);
+DO $$ BEGIN
+  CREATE TYPE attendance_source AS ENUM (
+    'manual',
+    'google',
+    'system'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TYPE google_account_status AS ENUM (
-  'connected',
-  'disconnected',
-  'error'
-);
+DO $$ BEGIN
+  CREATE TYPE google_account_status AS ENUM (
+    'connected',
+    'disconnected',
+    'error'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE TYPE meet_sync_status AS ENUM (
-  'pending',
-  'synced',
-  'failed',
-  'waiting_for_meet'
-);
+DO $$ BEGIN
+  CREATE TYPE meet_sync_status AS ENUM (
+    'pending',
+    'synced',
+    'failed',
+    'waiting_for_meet'
+  );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ─── TRAINER GOOGLE ACCOUNT MAPPING ───────────────────────────────────────
 
-CREATE TABLE trainer_google_accounts (
+CREATE TABLE IF NOT EXISTS trainer_google_accounts (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   trainer_id          UUID NOT NULL REFERENCES trainers(id) ON DELETE CASCADE,
   google_email        TEXT NOT NULL,
@@ -57,12 +67,12 @@ CREATE TABLE trainer_google_accounts (
   UNIQUE (trainer_id)
 );
 
-CREATE INDEX idx_trainer_google_trainer ON trainer_google_accounts(trainer_id);
-CREATE INDEX idx_trainer_google_email   ON trainer_google_accounts(google_email);
+CREATE INDEX IF NOT EXISTS idx_trainer_google_trainer ON trainer_google_accounts(trainer_id);
+CREATE INDEX IF NOT EXISTS idx_trainer_google_email   ON trainer_google_accounts(google_email);
 
 -- ─── LIVE CLASSES ─────────────────────────────────────────────────────────
 
-CREATE TABLE live_classes (
+CREATE TABLE IF NOT EXISTS live_classes (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- LMS references
@@ -108,19 +118,19 @@ CREATE TABLE live_classes (
 );
 
 -- Composite and individual indexes for performance
-CREATE INDEX idx_live_classes_programme    ON live_classes(programme_id);
-CREATE INDEX idx_live_classes_module       ON live_classes(module_id);
-CREATE INDEX idx_live_classes_trainer      ON live_classes(trainer_id);
-CREATE INDEX idx_live_classes_nadi         ON live_classes(nadi_id);
-CREATE INDEX idx_live_classes_state        ON live_classes(state_id);
-CREATE INDEX idx_live_classes_status       ON live_classes(status);
-CREATE INDEX idx_live_classes_start        ON live_classes(scheduled_start);
-CREATE INDEX idx_live_classes_start_status ON live_classes(scheduled_start, status);
-CREATE INDEX idx_live_classes_trainer_start ON live_classes(trainer_id, scheduled_start);
+CREATE INDEX IF NOT EXISTS idx_live_classes_programme    ON live_classes(programme_id);
+CREATE INDEX IF NOT EXISTS idx_live_classes_module       ON live_classes(module_id);
+CREATE INDEX IF NOT EXISTS idx_live_classes_trainer      ON live_classes(trainer_id);
+CREATE INDEX IF NOT EXISTS idx_live_classes_nadi         ON live_classes(nadi_id);
+CREATE INDEX IF NOT EXISTS idx_live_classes_state        ON live_classes(state_id);
+CREATE INDEX IF NOT EXISTS idx_live_classes_status       ON live_classes(status);
+CREATE INDEX IF NOT EXISTS idx_live_classes_start        ON live_classes(scheduled_start);
+CREATE INDEX IF NOT EXISTS idx_live_classes_start_status ON live_classes(scheduled_start, status);
+CREATE INDEX IF NOT EXISTS idx_live_classes_trainer_start ON live_classes(trainer_id, scheduled_start);
 
 -- ─── LIVE CLASS ATTENDANCE ─────────────────────────────────────────────────
 
-CREATE TABLE live_class_attendance (
+CREATE TABLE IF NOT EXISTS live_class_attendance (
   id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   live_class_id       UUID NOT NULL REFERENCES live_classes(id) ON DELETE CASCADE,
   participant_id      UUID NOT NULL REFERENCES participants(id) ON DELETE CASCADE,
@@ -150,14 +160,14 @@ CREATE TABLE live_class_attendance (
   UNIQUE (live_class_id, participant_id)
 );
 
-CREATE INDEX idx_lca_live_class    ON live_class_attendance(live_class_id);
-CREATE INDEX idx_lca_participant   ON live_class_attendance(participant_id);
-CREATE INDEX idx_lca_status        ON live_class_attendance(attendance_status);
-CREATE INDEX idx_lca_class_part    ON live_class_attendance(live_class_id, participant_id);
+CREATE INDEX IF NOT EXISTS idx_lca_live_class    ON live_class_attendance(live_class_id);
+CREATE INDEX IF NOT EXISTS idx_lca_participant   ON live_class_attendance(participant_id);
+CREATE INDEX IF NOT EXISTS idx_lca_status        ON live_class_attendance(attendance_status);
+CREATE INDEX IF NOT EXISTS idx_lca_class_part    ON live_class_attendance(live_class_id, participant_id);
 
 -- ─── LIVE CLASS JOIN LOG (separate from attendance; every click is recorded) ──
 
-CREATE TABLE live_class_join_log (
+CREATE TABLE IF NOT EXISTS live_class_join_log (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   live_class_id   UUID NOT NULL REFERENCES live_classes(id) ON DELETE CASCADE,
   participant_id  UUID NOT NULL REFERENCES participants(id) ON DELETE CASCADE,
@@ -168,8 +178,8 @@ CREATE TABLE live_class_join_log (
   user_agent      TEXT
 );
 
-CREATE INDEX idx_join_log_class ON live_class_join_log(live_class_id);
-CREATE INDEX idx_join_log_part  ON live_class_join_log(participant_id);
+CREATE INDEX IF NOT EXISTS idx_join_log_class ON live_class_join_log(live_class_id);
+CREATE INDEX IF NOT EXISTS idx_join_log_part  ON live_class_join_log(participant_id);
 
 -- ─── UPDATE SYSTEM SETTINGS WITH GOOGLE & ATTENDANCE CONFIG ────────────────
 

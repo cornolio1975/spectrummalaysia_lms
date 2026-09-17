@@ -7,14 +7,16 @@
 -- 1. ENUMS
 -- ============================================================
 
-CREATE TYPE content_review_status AS ENUM ('draft', 'pending_review', 'under_review', 'approved', 'rejected');
+DO $$ BEGIN
+  CREATE TYPE content_review_status AS ENUM ('draft', 'pending_review', 'under_review', 'approved', 'rejected');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- ============================================================
 -- 2. NEW TABLES
 -- ============================================================
 
 -- TRAINER WORKSPACES
-CREATE TABLE trainer_workspaces (
+CREATE TABLE IF NOT EXISTS trainer_workspaces (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   trainer_id       UUID NOT NULL REFERENCES trainers(id) ON DELETE CASCADE,
   workspace_name   TEXT NOT NULL,
@@ -26,10 +28,10 @@ CREATE TABLE trainer_workspaces (
   UNIQUE(trainer_id)
 );
 
-CREATE INDEX idx_workspace_trainer ON trainer_workspaces(trainer_id);
+CREATE INDEX IF NOT EXISTS idx_workspace_trainer ON trainer_workspaces(trainer_id);
 
 -- CONTENT AUDIT LOGS (Specific for trainer content operations)
-CREATE TABLE content_audit_logs (
+CREATE TABLE IF NOT EXISTS content_audit_logs (
   id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id              UUID REFERENCES auth.users(id),
   trainer_id           UUID REFERENCES trainers(id),
@@ -44,11 +46,11 @@ CREATE TABLE content_audit_logs (
   created_at           TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_content_audit_workspace ON content_audit_logs(trainer_workspace_id);
-CREATE INDEX idx_content_audit_resource ON content_audit_logs(resource_id);
+CREATE INDEX IF NOT EXISTS idx_content_audit_workspace ON content_audit_logs(trainer_workspace_id);
+CREATE INDEX IF NOT EXISTS idx_content_audit_resource ON content_audit_logs(resource_id);
 
 -- CONTENT REVIEWS (Approval Workflow)
-CREATE TABLE content_reviews (
+CREATE TABLE IF NOT EXISTS content_reviews (
   id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   resource_type        TEXT NOT NULL, -- 'programme', 'lesson_content'
   resource_id          UUID NOT NULL,
@@ -63,7 +65,7 @@ CREATE TABLE content_reviews (
   updated_at           TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_content_reviews_resource ON content_reviews(resource_type, resource_id);
+CREATE INDEX IF NOT EXISTS idx_content_reviews_resource ON content_reviews(resource_type, resource_id);
 
 -- ============================================================
 -- 3. ALTER EXISTING TABLES
@@ -71,41 +73,41 @@ CREATE INDEX idx_content_reviews_resource ON content_reviews(resource_type, reso
 
 -- Add workspace ownership and review status to programmes
 ALTER TABLE programmes 
-  ADD COLUMN trainer_id UUID REFERENCES trainers(id),
-  ADD COLUMN trainer_workspace_id UUID REFERENCES trainer_workspaces(id),
-  ADD COLUMN review_status content_review_status NOT NULL DEFAULT 'draft';
+  ADD COLUMN IF NOT EXISTS trainer_id UUID REFERENCES trainers(id),
+  ADD COLUMN IF NOT EXISTS trainer_workspace_id UUID REFERENCES trainer_workspaces(id),
+  ADD COLUMN IF NOT EXISTS review_status content_review_status NOT NULL DEFAULT 'draft';
 
-CREATE INDEX idx_programmes_workspace ON programmes(trainer_workspace_id);
+CREATE INDEX IF NOT EXISTS idx_programmes_workspace ON programmes(trainer_workspace_id);
 
 -- Add workspace ownership to programme_modules
 ALTER TABLE programme_modules 
-  ADD COLUMN trainer_id UUID REFERENCES trainers(id),
-  ADD COLUMN trainer_workspace_id UUID REFERENCES trainer_workspaces(id);
+  ADD COLUMN IF NOT EXISTS trainer_id UUID REFERENCES trainers(id),
+  ADD COLUMN IF NOT EXISTS trainer_workspace_id UUID REFERENCES trainer_workspaces(id);
 
-CREATE INDEX idx_modules_workspace ON programme_modules(trainer_workspace_id);
+CREATE INDEX IF NOT EXISTS idx_modules_workspace ON programme_modules(trainer_workspace_id);
 
 -- Add workspace ownership to lessons
 ALTER TABLE lessons 
-  ADD COLUMN trainer_id UUID REFERENCES trainers(id),
-  ADD COLUMN trainer_workspace_id UUID REFERENCES trainer_workspaces(id);
+  ADD COLUMN IF NOT EXISTS trainer_id UUID REFERENCES trainers(id),
+  ADD COLUMN IF NOT EXISTS trainer_workspace_id UUID REFERENCES trainer_workspaces(id);
 
-CREATE INDEX idx_lessons_workspace ON lessons(trainer_workspace_id);
+CREATE INDEX IF NOT EXISTS idx_lessons_workspace ON lessons(trainer_workspace_id);
 
 -- Add workspace ownership and versioning to lesson_contents (learning materials)
 ALTER TABLE lesson_contents 
-  ADD COLUMN trainer_id UUID REFERENCES trainers(id),
-  ADD COLUMN trainer_workspace_id UUID REFERENCES trainer_workspaces(id),
-  ADD COLUMN storage_path TEXT,
-  ADD COLUMN version INTEGER NOT NULL DEFAULT 1,
-  ADD COLUMN previous_version_id UUID REFERENCES lesson_contents(id);
+  ADD COLUMN IF NOT EXISTS trainer_id UUID REFERENCES trainers(id),
+  ADD COLUMN IF NOT EXISTS trainer_workspace_id UUID REFERENCES trainer_workspaces(id),
+  ADD COLUMN IF NOT EXISTS storage_path TEXT,
+  ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS previous_version_id UUID REFERENCES lesson_contents(id);
 
-CREATE INDEX idx_contents_workspace ON lesson_contents(trainer_workspace_id);
+CREATE INDEX IF NOT EXISTS idx_contents_workspace ON lesson_contents(trainer_workspace_id);
 
 -- Add workspace ownership to media
 ALTER TABLE media 
-  ADD COLUMN trainer_workspace_id UUID REFERENCES trainer_workspaces(id);
+  ADD COLUMN IF NOT EXISTS trainer_workspace_id UUID REFERENCES trainer_workspaces(id);
 
-CREATE INDEX idx_media_workspace ON media(trainer_workspace_id);
+CREATE INDEX IF NOT EXISTS idx_media_workspace ON media(trainer_workspace_id);
 
 -- ============================================================
 -- 4. TRIGGERS
@@ -158,7 +160,7 @@ TO authenticated
 WITH CHECK (
   bucket_id = 'trainer_content' AND
   (storage.foldername(name))[1] IN (
-    SELECT id::text FROM trainer_workspaces tw
+    SELECT tw.id::text FROM trainer_workspaces tw
     JOIN trainers t ON tw.trainer_id = t.id
     WHERE t.created_by = auth.uid() OR auth.uid() IN (SELECT id FROM profiles WHERE role IN ('super_admin', 'programme_admin'))
   )
@@ -172,7 +174,7 @@ USING (
   bucket_id = 'trainer_content' AND
   (
     (storage.foldername(name))[1] IN (
-      SELECT id::text FROM trainer_workspaces tw
+      SELECT tw.id::text FROM trainer_workspaces tw
       JOIN trainers t ON tw.trainer_id = t.id
       WHERE t.created_by = auth.uid()
     )
@@ -188,7 +190,7 @@ TO authenticated
 USING (
   bucket_id = 'trainer_content' AND
   (storage.foldername(name))[1] IN (
-    SELECT id::text FROM trainer_workspaces tw
+    SELECT tw.id::text FROM trainer_workspaces tw
     JOIN trainers t ON tw.trainer_id = t.id
     WHERE t.created_by = auth.uid() OR auth.uid() IN (SELECT id FROM profiles WHERE role IN ('super_admin', 'programme_admin'))
   )
@@ -200,7 +202,7 @@ TO authenticated
 USING (
   bucket_id = 'trainer_content' AND
   (storage.foldername(name))[1] IN (
-    SELECT id::text FROM trainer_workspaces tw
+    SELECT tw.id::text FROM trainer_workspaces tw
     JOIN trainers t ON tw.trainer_id = t.id
     WHERE t.created_by = auth.uid() OR auth.uid() IN (SELECT id FROM profiles WHERE role IN ('super_admin', 'programme_admin'))
   )

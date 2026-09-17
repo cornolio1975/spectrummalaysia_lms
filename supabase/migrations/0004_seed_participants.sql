@@ -18,8 +18,7 @@ INSERT INTO participants (
   nadi_id,
   organization,
   consent_given,
-  consent_date,
-  status
+  consent_date
 ) VALUES
 
 -- ─── Selangor — NADI Petaling Jaya ─────────────────────────────────────────
@@ -526,4 +525,5 @@ INSERT INTO participants (
   'KAO Digital Marketing',
   TRUE,
   '2026-07-30'
-);
+)
+ON CONFLICT (id) DO NOTHING;

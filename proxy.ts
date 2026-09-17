@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public routes
-  const publicPaths = ["/login", "/forgot-password", "/verify", "/about"];
+  const publicPaths = ["/login", "/forgot-password", "/verify", "/about", "/api"];
   const isPublicPath = publicPaths.some((p) => pathname.startsWith(p));
 
   // Redirect unauthenticated users away from protected routes

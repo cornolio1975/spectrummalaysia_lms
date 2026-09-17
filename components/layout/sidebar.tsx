@@ -18,9 +18,50 @@ const NAV_STRUCTURE: NavItem[] = [
     href: "/dashboard",
   },
   {
+    icon: "📖",
+    label: "Courses & Curriculum",
+    children: [
+      { label: "Course Management", href: "/courses" },
+      { label: "Public Catalogue", href: "/catalogue" },
+      { label: "My Learning", href: "/my-learning" },
+    ],
+  },
+  {
     icon: "📚",
     label: "Programme Management",
     href: "/programmes",
+  },
+  {
+    icon: "🎖️",
+    label: "Micro-Credentials",
+    children: [
+      { label: "Credential Registry", href: "/credentials" },
+      { label: "Certificate Designer", href: "/credentials/designer" },
+      { label: "Credential Stacking", href: "/credentials/stacking" },
+      { label: "Learner Wallet", href: "/wallet" },
+    ],
+  },
+  {
+    icon: "⚡",
+    label: "Skills & Competencies",
+    href: "/skills",
+  },
+  {
+    icon: "🛠️",
+    label: "Practical & RPL",
+    children: [
+      { label: "Practical Tasks", href: "/practical-assessments" },
+      { label: "Prior Learning (RPL)", href: "/rpl" },
+      { label: "Evidence Vault", href: "/evidence" },
+    ],
+  },
+  {
+    icon: "👥",
+    label: "Participants",
+    children: [
+      { label: "Participant Directory", href: "/participants" },
+      { label: "Learner 360 Profile", href: "/learner-360" },
+    ],
   },
   {
     icon: "🏛",
@@ -28,16 +69,19 @@ const NAV_STRUCTURE: NavItem[] = [
     href: "/nadi",
   },
   {
-    icon: "👥",
-    label: "Participants",
-    href: "/participants",
+    icon: "📅",
+    label: "Events & Trainers",
+    children: [
+      { label: "Events & Sessions", href: "/events" },
+      { label: "Trainers & Workspace", href: "/events/trainers" },
+    ],
   },
   {
-    icon: "📅",
-    label: "Events",
+    icon: "🎥",
+    label: "Live Training",
     children: [
-      { label: "Events", href: "/events" },
-      { label: "Trainers", href: "/events/trainers" },
+      { label: "Live Classes", href: "/live-classes" },
+      { label: "My Classes", href: "/my-classes" },
     ],
   },
   {
@@ -51,19 +95,23 @@ const NAV_STRUCTURE: NavItem[] = [
     href: "/certificates",
   },
   {
-    icon: "🎥",
-    label: "Live Training",
+    icon: "📋",
+    label: "Reports & KPIs",
     children: [
-      { label: "Live Classes", href: "/live-classes" },
-      { label: "My Classes", href: "/my-classes" },
+      { label: "KPI Performance", href: "/reports/kpis" },
+      { label: "Live Training Analytics", href: "/reports/live-training" },
+      { label: "Organisation Reporting", href: "/reports/organisation" },
     ],
   },
   {
-    icon: "📋",
-    label: "Reports",
+    icon: "🤖",
+    label: "AI Platform",
     children: [
-      { label: "KPIs", href: "/reports/kpis" },
-      { label: "Live Training", href: "/reports/live-training" },
+      { label: "AI Providers", href: "/admin/ai/providers" },
+      { label: "Features Matrix", href: "/admin/ai/features" },
+      { label: "AI Test Console", href: "/admin/ai/test" },
+      { label: "Usage & Budget", href: "/admin/ai/usage" },
+      { label: "Hostinger Router", href: "/admin/ai/router" },
     ],
   },
   {
@@ -73,6 +121,7 @@ const NAV_STRUCTURE: NavItem[] = [
       { label: "Audit Logs", href: "/admin/audit" },
       { label: "System Settings", href: "/admin/settings" },
       { label: "User Management", href: "/admin/users" },
+      { label: "n8n Automation", href: "/admin/settings/n8n" },
       { label: "Google Integration", href: "/admin/google" },
     ],
   },

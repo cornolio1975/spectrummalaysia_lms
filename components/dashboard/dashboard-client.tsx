@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface DashboardStats {
   totalParticipants: number;
@@ -92,9 +92,14 @@ interface DashboardClientProps {
 }
 
 export default function DashboardClient({ stats }: DashboardClientProps) {
+  const [mounted, setMounted] = useState(false);
   const [selectedYear] = useState("2026");
   const [selectedProgramme, setSelectedProgramme] = useState("All");
   const [selectedState, setSelectedState] = useState("All");
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Demo values when DB is empty (will be replaced by actual data once seeded)
   const displayStats = {
@@ -129,8 +134,8 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
                 📊 Demo Data — Seed database to show live values
               </span>
             )}
-            <span style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-              Last updated: {new Date().toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+            <span suppressHydrationWarning style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
+              Last updated: {mounted ? new Date().toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Live"}
             </span>
           </div>
         </div>
