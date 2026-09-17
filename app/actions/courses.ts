@@ -98,6 +98,11 @@ export async function createCourse(formData: CourseFormData) {
   }
 
   revalidatePath("/courses");
+  revalidatePath("/catalogue");
+  
+  // Revalidate SpectrumMY-WEB landing page
+  await revalidateSpectrumWeb();
+  
   return { data };
 }
 
@@ -123,6 +128,11 @@ export async function updateCourse(id: string, formData: CourseFormData) {
 
   revalidatePath(`/courses/${id}`);
   revalidatePath("/courses");
+  revalidatePath("/catalogue");
+  
+  // Revalidate SpectrumMY-WEB landing page
+  await revalidateSpectrumWeb();
+  
   return { data };
 }
 
@@ -139,6 +149,11 @@ export async function deleteCourse(id: string) {
   }
 
   revalidatePath("/courses");
+  revalidatePath("/catalogue");
+  
+  // Revalidate SpectrumMY-WEB landing page
+  await revalidateSpectrumWeb();
+  
   return { success: true };
 }
 
@@ -302,3 +317,19 @@ export async function completeCourseLesson(courseId: string, lessonId: string, p
   revalidatePath("/certificates");
   return { progressPct, certificateResult };
 }
+
+// Helper function to auto-update SpectrumMY-WEB landing page
+async function revalidateSpectrumWeb() {
+  try {
+    // You may need to adjust this endpoint or add a secret token header
+    // depending on how the webhook is set up on SpectrumMY-WEB.
+    await fetch("https://cyan-caribou-991144.hostingersite.com/api/revalidate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tag: "courses" }),
+    });
+  } catch (error) {
+    console.error("Failed to revalidate SpectrumMY-WEB:", error);
+  }
+}
+
