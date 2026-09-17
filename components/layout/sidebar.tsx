@@ -13,6 +13,11 @@ interface NavItem {
 
 const NAV_STRUCTURE: NavItem[] = [
   {
+    icon: "🏠",
+    label: "Home",
+    href: "https://cyan-caribou-991144.hostingersite.com/",
+  },
+  {
     icon: "▦",
     label: "Dashboard",
     href: "/dashboard",
