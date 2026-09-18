@@ -6,6 +6,10 @@ import { createClient } from "@/utils/supabase/client";
 import { getUserNotifications, markNotificationAsRead } from "@/app/actions/notifications";
 import { universalGlobalSearch, GlobalSearchResult } from "@/app/actions/search";
 import Link from "next/link";
+import { Home } from "lucide-react";
+
+// The official public landing page
+const LANDING_PAGE_URL = process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://cyan-caribou-991144.hostingersite.com/";
 
 interface TopbarProps {
   onMenuClick: () => void;
@@ -156,6 +160,18 @@ export default function Topbar({
 
       {/* Right side */}
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
+        {/* Home Button linking to Landing Page */}
+        <a
+          href={LANDING_PAGE_URL}
+          className="btn btn-ghost"
+          style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.85rem", fontWeight: 500 }}
+          aria-label="Home"
+          title="Return to Landing Page"
+        >
+          <Home size={18} />
+          <span className="hidden sm:inline">Home</span>
+        </a>
+
         {/* Breadcrumb / context - hidden on small */}
         <div
           style={{
