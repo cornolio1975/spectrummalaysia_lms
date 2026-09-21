@@ -36,8 +36,8 @@ export function NadiClient({ nadiSites, states }: NadiClientProps) {
   };
 
   const filteredSites = nadiSites.filter((nadi) => {
-    const matchesSearch = nadi.nadi_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          nadi.nadi_code.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = nadi.site_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          nadi.ref_id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesState = stateFilter ? nadi.state_id === stateFilter : true;
     return matchesSearch && matchesState;
   });
@@ -59,7 +59,7 @@ export function NadiClient({ nadiSites, states }: NadiClientProps) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "12px", marginBottom: "20px" }}>
           {[
             { label: "Total Sites", value: nadiSites.length, icon: "🏛" },
-            { label: "Active Sites", value: nadiSites.filter(n=>n.status==='active').length, icon: "✅" },
+            { label: "Active Sites", value: nadiSites.filter(n=>n.status==='In Operation').length, icon: "✅" },
             { label: "States Covered", value: new Set(nadiSites.map(n=>n.state_id)).size, icon: "🗺" },
           ].map(({ label, value, icon }) => (
             <div key={label} className="card card-sm" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -99,24 +99,32 @@ export function NadiClient({ nadiSites, states }: NadiClientProps) {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Code</th>
-                <th>NADI Name</th>
+                <th style={{ width: "50px", textAlign: "center" }}>NO</th>
+                <th>Entity Name</th>
+                <th>Phase</th>
+                <th>Site Name</th>
+                <th>RefID</th>
                 <th>State</th>
-                <th>District</th>
+                <th>Region</th>
+                <th>TP (DUSP)</th>
                 <th>Contact Person</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredSites.length > 0 ? filteredSites.map((nadi) => (
+              {filteredSites.length > 0 ? filteredSites.map((nadi, index) => (
                 <tr key={nadi.id}>
-                  <td><code style={{ fontSize: "0.72rem", background: "var(--surface)", padding: "2px 6px", borderRadius: "4px" }}>{nadi.nadi_code}</code></td>
-                  <td style={{ fontWeight: 500 }}>{nadi.nadi_name}</td>
+                  <td style={{ textAlign: "center", color: "var(--text-muted)", fontSize: "0.85rem" }}>{index + 1}</td>
+                  <td>{nadi.entity_name}</td>
+                  <td>{nadi.phase}</td>
+                  <td style={{ fontWeight: 500 }}>{nadi.site_name}</td>
+                  <td><code style={{ fontSize: "0.72rem", background: "var(--surface)", padding: "2px 6px", borderRadius: "4px" }}>{nadi.ref_id}</code></td>
                   <td>{nadi.states?.state_name}</td>
-                  <td>{nadi.district || "-"}</td>
+                  <td>{nadi.region}</td>
+                  <td>{nadi.tp_dusp}</td>
                   <td style={{ fontSize: "0.82rem" }}>{nadi.contact_person || "-"}</td>
-                  <td><span className={`badge ${nadi.status === 'active' ? 'badge-success' : 'badge-neutral'}`}>{nadi.status}</span></td>
+                  <td><span className={`badge ${nadi.status === 'In Operation' ? 'badge-success' : 'badge-neutral'}`}>{nadi.status}</span></td>
                   <td>
                     <div style={{ display: "flex", gap: "4px" }}>
                       <button className="btn btn-outline btn-sm" onClick={() => handleOpenEdit(nadi)}>Edit</button>
@@ -126,7 +134,7 @@ export function NadiClient({ nadiSites, states }: NadiClientProps) {
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "20px" }}>No NADI sites found.</td>
+                  <td colSpan={11} style={{ textAlign: "center", padding: "20px" }}>No NADI sites found.</td>
                 </tr>
               )}
             </tbody>

@@ -7,22 +7,36 @@ import { NadiFormData, nadiSchema } from "@/lib/validations/nadi";
 export async function getNadiSites() {
   const supabase = await createClient();
   
-  const { data, error } = await supabase
-    .from("nadi_sites")
-    .select(`
-      *,
-      states (
-        state_name
-      )
-    `)
-    .order("nadi_name");
+  let allSites: any[] = [];
+  let from = 0;
+  const step = 1000;
 
-  if (error) {
-    console.error("Error fetching NADI sites:", error);
-    return { error: error.message };
+  while (true) {
+    const { data, error } = await supabase
+      .from("nadi_sites")
+      .select(`
+        *,
+        states (
+          state_name
+        )
+      `)
+      .order("site_name")
+      .range(from, from + step - 1);
+
+    if (error) {
+      console.error("Error fetching NADI sites:", error);
+      return { error: error.message };
+    }
+
+    if (!data || data.length === 0) break;
+    
+    allSites = [...allSites, ...data];
+    
+    if (data.length < step) break;
+    from += step;
   }
 
-  return { data };
+  return { data: allSites };
 }
 
 export async function getStates() {

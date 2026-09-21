@@ -22,16 +22,15 @@ export function NadiForm({ initialData, states, onSuccess, onCancel }: NadiFormP
   const { register, handleSubmit, formState: { errors } } = useForm<NadiFormData>({
     resolver: zodResolver(nadiSchema) as any,
     defaultValues: (initialData as any) || {
-      nadi_code: "",
-      nadi_name: "",
+      entity_name: "",
+      phase: "",
       state_id: "",
-      address: "",
-      district: "",
-      postcode: "",
+      site_name: "",
+      ref_id: "",
+      region: "",
+      tp_dusp: "",
       contact_person: "",
-      contact_phone: "",
-      contact_email: "",
-      status: "active",
+      status: "In Operation",
     },
   });
 
@@ -59,65 +58,59 @@ export function NadiForm({ initialData, states, onSuccess, onCancel }: NadiFormP
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">NADI Code</label>
-          <input {...register("nadi_code")} className="form-input w-full" placeholder="e.g. NADI-SGR-001" />
-          {errors.nadi_code && <p className="text-red-500 text-xs mt-1">{errors.nadi_code.message}</p>}
+          <label className="block text-sm font-medium mb-1">Entity Name</label>
+          <input {...register("entity_name")} className="form-input w-full" />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">NADI Name</label>
-          <input {...register("nadi_name")} className="form-input w-full" placeholder="e.g. NADI Petaling Jaya" />
-          {errors.nadi_name && <p className="text-red-500 text-xs mt-1">{errors.nadi_name.message}</p>}
+          <label className="block text-sm font-medium mb-1">Phase</label>
+          <input {...register("phase")} className="form-input w-full" />
         </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium mb-1">State</label>
-        <select {...register("state_id")} className="form-select w-full">
-          <option value="">Select a state</option>
-          {states.map(state => (
-            <option key={state.id} value={state.id}>{state.state_name}</option>
-          ))}
-        </select>
-        {errors.state_id && <p className="text-red-500 text-xs mt-1">{errors.state_id.message}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">District</label>
-          <input {...register("district")} className="form-input w-full" />
+          <label className="block text-sm font-medium mb-1">Site Name</label>
+          <input {...register("site_name")} className="form-input w-full" />
+          {errors.site_name && <p className="text-red-500 text-xs mt-1">{errors.site_name.message}</p>}
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Postcode</label>
-          <input {...register("postcode")} className="form-input w-full" />
+          <label className="block text-sm font-medium mb-1">RefID</label>
+          <input {...register("ref_id")} className="form-input w-full" />
+          {errors.ref_id && <p className="text-red-500 text-xs mt-1">{errors.ref_id.message}</p>}
         </div>
       </div>
 
-      <div>
-        <label className="block text-sm font-medium mb-1">Address</label>
-        <textarea {...register("address")} className="form-input w-full" rows={2}></textarea>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">State</label>
+          <select {...register("state_id")} className="form-select w-full">
+            <option value="">Select a state</option>
+            {states.map(state => (
+              <option key={state.id} value={state.id}>{state.state_name}</option>
+            ))}
+          </select>
+          {errors.state_id && <p className="text-red-500 text-xs mt-1">{errors.state_id.message}</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Region</label>
+          <input {...register("region")} className="form-input w-full" />
+        </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">TP (DUSP)</label>
+          <input {...register("tp_dusp")} className="form-input w-full" />
+        </div>
         <div>
           <label className="block text-sm font-medium mb-1">Contact Person</label>
           <input {...register("contact_person")} className="form-input w-full" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Contact Phone</label>
-          <input {...register("contact_phone")} className="form-input w-full" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Contact Email</label>
-          <input {...register("contact_email")} className="form-input w-full" type="email" />
         </div>
       </div>
 
       <div>
         <label className="block text-sm font-medium mb-1">Status</label>
-        <select {...register("status")} className="form-select w-full">
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+        <input {...register("status")} className="form-input w-full" placeholder="In Operation" />
       </div>
 
       <div className="flex justify-end gap-2 mt-6">

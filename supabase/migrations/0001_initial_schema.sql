@@ -59,24 +59,21 @@ CREATE INDEX idx_states_code ON states(state_code);
 
 CREATE TABLE nadi_sites (
   id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nadi_code        TEXT NOT NULL UNIQUE,
-  nadi_name        TEXT NOT NULL,
+  entity_name      TEXT,
+  phase            TEXT,
   state_id         UUID NOT NULL REFERENCES states(id) ON DELETE RESTRICT,
-  address          TEXT,
-  district         TEXT,
-  postcode         TEXT,
-  latitude         DECIMAL(10,7),
-  longitude        DECIMAL(10,7),
+  site_name        TEXT NOT NULL,
+  ref_id           TEXT NOT NULL UNIQUE,
+  region           TEXT,
+  tp_dusp          TEXT,
+  status           TEXT NOT NULL DEFAULT 'In Operation',
   contact_person   TEXT,
-  contact_phone    TEXT,
-  contact_email    TEXT,
-  status           TEXT NOT NULL DEFAULT 'active',
   created_at       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX idx_nadi_state ON nadi_sites(state_id);
-CREATE INDEX idx_nadi_code  ON nadi_sites(nadi_code);
+CREATE INDEX idx_nadi_ref  ON nadi_sites(ref_id);
 CREATE INDEX idx_nadi_status ON nadi_sites(status);
 
 -- ============================================================
