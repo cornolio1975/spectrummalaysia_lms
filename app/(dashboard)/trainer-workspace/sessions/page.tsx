@@ -3,7 +3,7 @@ import { getTrainerSessions } from '@/services/trainer-sessions';
 import Link from 'next/link';
 
 export default async function TrainerSessionsPage() {
-  let sessions = [];
+  let sessions: any[] = [];
   let errorMsg = null;
 
   try {

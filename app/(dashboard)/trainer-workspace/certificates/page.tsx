@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/server';
 
 export default async function TrainerCertificatesPage() {
   let errorMsg = null;
-  let issuances = [];
+  let issuances: any[] = [];
 
   try {
     const { workspaceId } = await getTrainerWorkspace();

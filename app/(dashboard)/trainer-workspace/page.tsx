@@ -7,7 +7,7 @@ import { createClient } from '@/utils/supabase/server';
 export default async function TrainerDashboardPage() {
   let workspaceInfo;
   let stats;
-  let todaysActivity = [];
+  let todaysActivity: any[] = [];
   let trainerProfile;
   let errorMsg = null;
 

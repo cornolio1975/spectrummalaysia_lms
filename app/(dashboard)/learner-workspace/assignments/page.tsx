@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/server';
 
 export default async function LearnerAssignmentsPage() {
   let assignments = [];
-  let submissions = [];
+  let submissions: any[] = [];
   let errorMsg = null;
 
   try {

@@ -3,7 +3,7 @@ import { getTrainerAssessments } from '@/services/trainer-assessments';
 import Link from 'next/link';
 
 export default async function TrainerAssessmentsPage() {
-  let assessments = [];
+  let assessments: any[] = [];
   let errorMsg = null;
 
   try {

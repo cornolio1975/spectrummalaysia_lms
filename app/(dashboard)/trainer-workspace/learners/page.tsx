@@ -5,7 +5,7 @@ import Link from 'next/link';
 import LearnersClient from './LearnersClient';
 
 export default async function TrainerLearnersPage() {
-  let learners = [];
+  let learners: any[] = [];
   let courses = [];
   let errorMsg = null;
 

@@ -3,7 +3,7 @@ import { getTrainerSessions } from '@/services/trainer-sessions';
 import Link from 'next/link';
 
 export default async function TrainerAttendancePage() {
-  let sessions = [];
+  let sessions: any[] = [];
   let errorMsg = null;
 
   try {

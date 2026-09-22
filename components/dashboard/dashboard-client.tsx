@@ -3,18 +3,18 @@
 import { useState, useEffect } from "react";
 
 interface DashboardStats {
-  totalParticipants: number;
+  totalUsers: number;
   activeLearners: number;
-  programmes: number;
-  nadiSites: number;
-  events: number;
-  completedLearners: number;
-  certificates: number;
-  states: number;
+  activeTrainers: number;
+  programmeManagers: number;
+  activeCourses: number;
+  activeProgrammes: number;
+  totalEnrolments: number;
+  activeNadiSites: number;
+  totalParticipants: number;
+  courseCompletionRate: number;
   attendanceRate: number;
-  completionRate: number;
-  kpiAchievement: number;
-  activeSessions: number;
+  certificatesIssued: number;
 }
 
 interface KpiCardProps {
