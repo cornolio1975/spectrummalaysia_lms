@@ -31,7 +31,7 @@ export async function getLiveClasses(filters: LiveClassFilters = {}) {
       *,
       programmes(programme_name, programme_code),
       programme_modules(title),
-      nadi_sites(nadi_name, nadi_code),
+      nadi_sites(site_name, nadi_code),
       states(state_name),
       trainers(name, email)
     `, { count: "exact" })
@@ -59,7 +59,7 @@ export async function getLiveClassById(id: string) {
       *,
       programmes(programme_name, programme_code, certificate_enabled),
       programme_modules(title, sort_order),
-      nadi_sites(nadi_name, nadi_code, address),
+      nadi_sites(site_name, nadi_code, address),
       states(state_name, state_code),
       trainers(id, name, email, specialization),
       trainer_google_accounts(google_email, google_account_status)
@@ -76,7 +76,7 @@ export async function getLiveClassesForTrainer(trainerId: string) {
   const now = new Date().toISOString();
   const { data, error } = await supabase
     .from("live_classes")
-    .select(`*, programmes(programme_name), nadi_sites(nadi_name)`)
+    .select(`*, programmes(programme_name), nadi_sites(site_name)`)
     .eq("trainer_id", trainerId)
     .not("status", "eq", "cancelled")
     .order("scheduled_start", { ascending: true });
@@ -90,7 +90,7 @@ export async function getUpcomingLiveClasses(limit = 5) {
   const now = new Date().toISOString();
   const { data, error } = await supabase
     .from("live_classes")
-    .select(`*, programmes(programme_name), trainers(name), nadi_sites(nadi_name)`)
+    .select(`*, programmes(programme_name), trainers(name), nadi_sites(site_name)`)
     .in("status", ["scheduled", "live"])
     .gte("scheduled_start", now)
     .order("scheduled_start", { ascending: true })
@@ -108,7 +108,7 @@ export async function getTodayLiveClasses() {
 
   const { data, error } = await supabase
     .from("live_classes")
-    .select(`*, programmes(programme_name), trainers(name), nadi_sites(nadi_name)`)
+    .select(`*, programmes(programme_name), trainers(name), nadi_sites(site_name)`)
     .not("status", "eq", "cancelled")
     .gte("scheduled_start", start)
     .lt("scheduled_start", end)

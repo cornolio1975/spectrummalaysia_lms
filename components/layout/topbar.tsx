@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import { getUserNotifications, markNotificationAsRead } from "@/app/actions/notifications";
 import { universalGlobalSearch, GlobalSearchResult } from "@/app/actions/search";
 import Link from "next/link";
-import { Home } from "lucide-react";
+import { Home, Maximize } from "lucide-react";
 
 // The official public landing page
 const LANDING_PAGE_URL = process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://cyan-caribou-991144.hostingersite.com/";
@@ -28,6 +28,7 @@ export default function Topbar({
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Universal Global Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -39,6 +40,12 @@ export default function Topbar({
     getUserNotifications().then((res) => {
       if (res.data) setNotifications(res.data);
     });
+
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
@@ -55,6 +62,18 @@ export default function Topbar({
     await supabase.auth.signOut();
     router.push("/login");
     router.refresh();
+  };
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
   };
 
   const initials = userName
@@ -160,6 +179,16 @@ export default function Topbar({
 
       {/* Right side */}
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
+        {/* Fullscreen Button */}
+        <button
+          onClick={toggleFullscreen}
+          className="btn btn-ghost btn-icon"
+          aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+        >
+          <Maximize size={18} />
+        </button>
+
         {/* Home Button linking to Landing Page */}
         <a
           href={LANDING_PAGE_URL}
@@ -414,10 +443,26 @@ export default function Topbar({
                   </div>
                 </div>
                 {[
-                  { label: "My Profile", href: "/admin/profile" },
-                  { label: "System Settings", href: "/admin/settings" },
-                  { label: "User Management", href: "/admin/users" },
-                ].map((item) => (
+                  { 
+                    label: "My Profile", 
+                    href: userRole?.toLowerCase().includes("learner") 
+                      ? "/learner-workspace/profile" 
+                      : userRole?.toLowerCase().includes("trainer") 
+                        ? "/trainer-workspace/profile" 
+                        : "/admin/profile",
+                    show: true 
+                  },
+                  { 
+                    label: "System Settings", 
+                    href: "/admin/settings",
+                    show: userRole?.toLowerCase().includes("admin")
+                  },
+                  { 
+                    label: "User Management", 
+                    href: "/admin/users",
+                    show: userRole?.toLowerCase().includes("admin")
+                  },
+                ].filter(item => item.show).map((item) => (
                   <a
                     key={item.href}
                     href={item.href}

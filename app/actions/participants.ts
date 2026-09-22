@@ -9,7 +9,7 @@ export async function getParticipants() {
     .select(`
       *,
       states (state_name),
-      nadi_sites (nadi_name)
+      nadi_sites (site_name)
     `)
     .order("created_at", { ascending: false });
 

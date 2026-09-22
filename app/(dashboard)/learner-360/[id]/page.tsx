@@ -26,7 +26,7 @@ export default async function Learner360ProfilePage({
         .select(`
           *,
           states (state_name),
-          nadi_sites (nadi_name)
+          nadi_sites (site_name)
         `)
         .eq("id", id)
         .single(),

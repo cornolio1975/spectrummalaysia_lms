@@ -101,23 +101,22 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
     setMounted(true);
   }, []);
 
-  // Demo values when DB is empty (will be replaced by actual data once seeded)
   const displayStats = {
-    totalParticipants: stats.totalParticipants || 2485,
-    activeLearners:    stats.activeLearners    || 1862,
-    programmes:        stats.programmes        || 3,
-    nadiSites:         stats.nadiSites         || 73,
-    events:            stats.events            || 156,
-    completedLearners: stats.completedLearners || 1426,
-    certificates:      stats.certificates      || 1218,
-    states:            stats.states            || 16,
-    attendanceRate:    stats.attendanceRate     || 87,
-    completionRate:    stats.completionRate     || 74,
-    kpiAchievement:    stats.kpiAchievement     || 91,
-    activeSessions:    stats.activeSessions     || 12,
+    totalUsers:        stats.totalUsers,
+    activeLearners:    stats.activeLearners,
+    activeTrainers:    stats.activeTrainers,
+    programmeManagers: stats.programmeManagers,
+    activeCourses:     stats.activeCourses,
+    activeProgrammes:  stats.activeProgrammes,
+    totalEnrolments:   stats.totalEnrolments,
+    activeNadiSites:   stats.activeNadiSites,
+    totalParticipants: stats.totalParticipants,
+    courseCompletionRate: stats.courseCompletionRate,
+    attendanceRate:    stats.attendanceRate,
+    certificatesIssued: stats.certificatesIssued,
   };
 
-  const isDemo = stats.totalParticipants === 0;
+  const isDemo = false; // Trust backend fallbacks
 
   return (
     <div>
@@ -129,11 +128,6 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
             <p>SpectrumMY Programme & Learning Management System overview</p>
           </div>
           <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
-            {isDemo && (
-              <span className="badge badge-warning">
-                📊 Demo Data — Seed database to show live values
-              </span>
-            )}
             <span suppressHydrationWarning style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
               Last updated: {mounted ? new Date().toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "Live"}
             </span>
@@ -142,51 +136,6 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
       </div>
 
       <div className="page-body">
-        {/* Filter bar */}
-        <div className="filter-bar">
-          <div style={{ fontSize: "0.8rem", fontWeight: "600", color: "var(--text-secondary)", marginRight: "4px" }}>
-            Filter:
-          </div>
-          <select
-            className="form-select"
-            value={selectedYear}
-            style={{ width: "auto", fontSize: "0.82rem", padding: "5px 10px" }}
-            onChange={() => {}}
-          >
-            <option>2026</option>
-            <option>2025</option>
-          </select>
-          <select
-            className="form-select"
-            value={selectedProgramme}
-            style={{ width: "auto", fontSize: "0.82rem", padding: "5px 10px" }}
-            onChange={(e) => setSelectedProgramme(e.target.value)}
-          >
-            <option>All</option>
-            <option>eKelas Pelajar</option>
-            <option>eKelas Usahawan</option>
-            <option>AI WIRA</option>
-          </select>
-          <select
-            className="form-select"
-            value={selectedState}
-            style={{ width: "auto", fontSize: "0.82rem", padding: "5px 10px" }}
-            onChange={(e) => setSelectedState(e.target.value)}
-          >
-            <option>All</option>
-            <option>Selangor</option>
-            <option>Johor</option>
-            <option>Sabah</option>
-            <option>Sarawak</option>
-          </select>
-          <button
-            className="btn btn-outline btn-sm"
-            onClick={() => { setSelectedProgramme("All"); setSelectedState("All"); }}
-          >
-            Reset Filters
-          </button>
-        </div>
-
         {/* Primary KPI Cards */}
         <div style={{
           display: "grid",
@@ -195,105 +144,78 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
           marginBottom: "24px",
         }}>
           <KpiCard
-            label="Total Participants"
-            value={displayStats.totalParticipants}
-            sub="Registered across all programmes"
+            label="Total Users"
+            value={displayStats.totalUsers}
             icon="👥"
             iconBg="#eff6ff"
-            trend={{ value: 8.2, positive: true }}
           />
           <KpiCard
             label="Active Learners"
             value={displayStats.activeLearners}
-            sub="Currently enrolled & learning"
             icon="🎓"
             iconBg="#f0fdf4"
-            trend={{ value: 5.1, positive: true }}
           />
           <KpiCard
-            label="Programmes"
-            value={displayStats.programmes}
-            sub="Active programmes running"
+            label="Active Trainers"
+            value={displayStats.activeTrainers}
+            icon="👨‍🏫"
+            iconBg="#fffbeb"
+          />
+          <KpiCard
+            label="Programme Managers"
+            value={displayStats.programmeManagers}
+            icon="💼"
+            iconBg="#fdf4ff"
+          />
+          <KpiCard
+            label="Active Courses"
+            value={displayStats.activeCourses}
+            icon="📖"
+            iconBg="#eff6ff"
+          />
+          <KpiCard
+            label="Active Programmes"
+            value={displayStats.activeProgrammes}
             icon="📚"
             iconBg="#fefce8"
           />
           <KpiCard
-            label="NADI Sites"
-            value={displayStats.nadiSites}
-            sub="Across all states"
-            icon="🏛"
-            iconBg="#fdf4ff"
-          />
-          <KpiCard
-            label="Events Conducted"
-            value={displayStats.events}
-            sub="This year"
-            icon="📅"
-            iconBg="#fff7ed"
-            trend={{ value: 12.5, positive: true }}
-          />
-          <KpiCard
-            label="Completed"
-            value={displayStats.completedLearners}
-            sub="Programme completions"
-            icon="✅"
-            iconBg="#f0fdf4"
-            trend={{ value: 3.8, positive: true }}
-          />
-          <KpiCard
-            label="Certificates Issued"
-            value={displayStats.certificates}
-            sub="All time"
-            icon="🏆"
-            iconBg="#fffbeb"
-            trend={{ value: 15.2, positive: true }}
-          />
-          <KpiCard
-            label="States"
-            value={displayStats.states}
-            sub="Covered nationally"
-            icon="🗺"
-            iconBg="#f0f9ff"
-          />
-        </div>
-
-        {/* Rate KPI Cards */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "16px",
-          marginBottom: "28px",
-        }}>
-          <KpiCard
-            label="Attendance Rate"
-            value={displayStats.attendanceRate}
-            isPercent
-            sub="Average across all events"
+            label="Total Enrolments"
+            value={displayStats.totalEnrolments}
             icon="📋"
             iconBg="#f0fdf4"
           />
           <KpiCard
-            label="Completion Rate"
-            value={displayStats.completionRate}
-            isPercent
-            sub="Learning programme completion"
-            icon="📈"
-            iconBg="#eff6ff"
-          />
-          <KpiCard
-            label="KPI Achievement"
-            value={displayStats.kpiAchievement}
-            isPercent
-            sub="Overall programme KPI"
-            icon="🎯"
+            label="Active NADI Sites"
+            value={displayStats.activeNadiSites}
+            icon="🏛"
             iconBg="#fdf4ff"
           />
           <KpiCard
-            label="Active Sessions"
-            value={displayStats.activeSessions}
-            sub="Currently in progress"
-            icon="⚡"
+            label="Total Participants"
+            value={displayStats.totalParticipants}
+            icon="👥"
             iconBg="#fff7ed"
+          />
+          <KpiCard
+            label="Course Completion Rate"
+            value={displayStats.courseCompletionRate}
+            isPercent
+            icon="📈"
+            iconBg="#f0fdf4"
+          />
+          <KpiCard
+            label="Attendance Rate"
+            value={displayStats.attendanceRate}
+            isPercent
+            icon="✅"
+            iconBg="#eff6ff"
+          />
+          <KpiCard
+            label="Certificates Issued"
+            value={displayStats.certificatesIssued}
+            icon="🏆"
+            iconBg="#fffbeb"
           />
         </div>
 

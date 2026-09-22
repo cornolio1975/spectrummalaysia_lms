@@ -7,9 +7,10 @@ import { useRouter } from "next/navigation";
 
 interface TrainerFormProps {
   initialData?: any;
+  redirectUrl?: string;
 }
 
-export function TrainerForm({ initialData }: TrainerFormProps) {
+export function TrainerForm({ initialData, redirectUrl = "/events/trainers" }: TrainerFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -38,7 +39,7 @@ export function TrainerForm({ initialData }: TrainerFormProps) {
     if (result.error) {
       setError(result.error);
     } else {
-      router.push("/events/trainers");
+      router.push(redirectUrl);
       router.refresh();
     }
   };
@@ -78,13 +79,15 @@ export function TrainerForm({ initialData }: TrainerFormProps) {
           <label className="block text-sm font-medium mb-1">Status</label>
           <select {...register("status")} className="form-select w-full">
             <option value="active">Active</option>
+            <option value="pending">Pending Approval</option>
+            <option value="suspended">Suspended</option>
             <option value="inactive">Inactive</option>
           </select>
         </div>
       </div>
 
       <div className="flex justify-end gap-2 mt-6">
-        <button type="button" onClick={() => router.push("/events/trainers")} className="btn btn-outline" disabled={isSubmitting}>
+        <button type="button" onClick={() => router.push(redirectUrl)} className="btn btn-outline" disabled={isSubmitting}>
           Cancel
         </button>
         <button type="submit" className="btn btn-primary" disabled={isSubmitting}>

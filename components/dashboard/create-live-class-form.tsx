@@ -114,7 +114,7 @@ export function CreateLiveClassForm({ programmes, trainers, nadiSites }: CreateL
             <select className="form-select" {...register("nadi_id")}>
               <option value="">All / None Specific</option>
               {nadiSites.map(n => (
-                <option key={n.id} value={n.id}>{n.nadi_name}</option>
+                <option key={n.id} value={n.id}>{n.site_name}</option>
               ))}
             </select>
           </div>

@@ -611,7 +611,15 @@ a:hover { text-decoration: underline; }
 }
 
 /* ─── Scrollbar (global) ─────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 8px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+/* ─── Layout Collapsed State ────────────────────────────────────────── */
+.layout-collapsed {
+  --sidebar-width: 0px;
+}
+.layout-collapsed #mobile-menu-btn {
+  display: flex !important;
+}

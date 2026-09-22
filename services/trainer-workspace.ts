@@ -21,7 +21,7 @@ export async function getTrainerWorkspace(): Promise<TrainerWorkspaceInfo> {
   const { data: trainer, error: trainerError } = await supabase
     .from('trainers')
     .select('id')
-    .eq('created_by', user.id)
+    .eq('email', user.email)
     .single();
 
   if (trainerError || !trainer) {

@@ -11,6 +11,7 @@ const ROLES = [
   { value: "trainer", label: "Trainer" },
   { value: "registrar", label: "Registrar" },
   { value: "observer", label: "Observer" },
+  { value: "learner", label: "Learner" },
 ];
 
 export function AddUserModal({

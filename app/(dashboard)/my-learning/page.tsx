@@ -16,7 +16,7 @@ export default async function MyLearningPage() {
         *,
         courses (*)
       `)
-      .order("created_at", { ascending: false }),
+      .order("enrolled_at", { ascending: false }),
     supabase
       .from("practical_submissions")
       .select(`

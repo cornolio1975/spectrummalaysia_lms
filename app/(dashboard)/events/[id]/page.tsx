@@ -29,8 +29,8 @@ export default async function EventDetailsPage({ params }: { params: Promise<{ i
         <div>
           <Link href="/events" className="text-sm text-primary-500 hover:underline mb-2 inline-block">← Back to Events</Link>
           <h1>{event.programmes?.programme_name}</h1>
-          <p>
-            {event.nadi_sites?.nadi_name} • {new Date(event.start_date).toLocaleDateString()} to {new Date(event.end_date).toLocaleDateString()}
+          <p className="text-[var(--text-muted)] text-sm mb-4">
+            {event.nadi_sites?.site_name} • {new Date(event.start_date).toLocaleDateString()} to {new Date(event.end_date).toLocaleDateString()}
           </p>
         </div>
       </div>

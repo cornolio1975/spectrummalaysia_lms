@@ -17,7 +17,7 @@ export default async function OrganisationReportsPage() {
     interventionsRes,
     categoriesRes,
   ] = await Promise.all([
-    supabase.from("participants").select("id, nadi_sites(nadi_name), states(state_name)"),
+    supabase.from("participants").select("id, nadi_sites(site_name), states(state_name)"),
     supabase.from("courses").select("id, category_id"),
     supabase.from("credential_issuances").select("id"),
     supabase.from("course_enrolments").select("id, status"),
@@ -41,7 +41,7 @@ export default async function OrganisationReportsPage() {
   // Aggregate by NADI site
   const siteMap = new Map<string, { name: string; state: string; learnersCount: number }>();
   for (const p of participants) {
-    const siteName = (p.nadi_sites as any)?.nadi_name || "Central / Online";
+    const siteName = (p.nadi_sites as any)?.site_name || "Central / Online";
     const stateName = (p.states as any)?.state_name || "National";
     const key = `${siteName}-${stateName}`;
     if (!siteMap.has(key)) {

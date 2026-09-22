@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 interface EventFormProps {
   initialData?: EventFormData & { id: string };
   programmes: { id: string; programme_name: string }[];
-  nadiSites: { id: string; nadi_name: string }[];
+  nadiSites: { id: string; site_name: string }[];
   onSuccess?: () => void;
   onCancel?: () => void;
 }
@@ -77,7 +77,7 @@ export function EventForm({ initialData, programmes, nadiSites, onSuccess, onCan
         <select {...register("nadi_id")} className="form-select w-full">
           <option value="">Select a NADI site</option>
           {nadiSites.map(nadi => (
-            <option key={nadi.id} value={nadi.id}>{nadi.nadi_name}</option>
+            <option key={nadi.id} value={nadi.id}>{nadi.site_name}</option>
           ))}
         </select>
         {errors.nadi_id && <p className="text-red-500 text-xs mt-1">{errors.nadi_id.message}</p>}

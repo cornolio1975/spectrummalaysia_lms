@@ -26,6 +26,7 @@ const ROLES = [
   { value: "trainer", label: "Trainer" },
   { value: "registrar", label: "Registrar" },
   { value: "observer", label: "Observer" },
+  { value: "learner", label: "Learner" },
 ];
 
 export function UserTable({
@@ -35,7 +36,7 @@ export function UserTable({
 }: {
   users: User[];
   states: { id: string; state_name: string }[];
-  nadiSites: { id: string; nadi_name: string }[];
+  nadiSites: { id: string; site_name: string }[];
 }) {
   const [isPending, startTransition] = useTransition();
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
@@ -211,7 +212,7 @@ export function UserTable({
                       >
                         <option value="none">-- Select NADI Site --</option>
                         {nadiSites.map((n) => (
-                          <option key={n.id} value={n.id}>{n.nadi_name}</option>
+                          <option key={n.id} value={n.id}>{n.site_name}</option>
                         ))}
                       </select>
                     )}

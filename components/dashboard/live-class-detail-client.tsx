@@ -83,7 +83,7 @@ export function LiveClassDetailClient({ liveClass, attendance }: LiveClassDetail
               </div>
               <div>
                 <div className="text-sm text-muted">NADI Site</div>
-                <div className="font-medium">{liveClass.nadi_sites?.nadi_name || "All / None Specific"}</div>
+                <div className="font-medium">{liveClass.nadi_sites?.site_name || "All / None Specific"}</div>
               </div>
               <div>
                 <div className="text-sm text-muted">State</div>

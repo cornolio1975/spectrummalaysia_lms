@@ -142,7 +142,7 @@ export function LearnerProfile360Client({
                 )}
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3.5 w-3.5 text-gray-400" />
-                  {participant.nadi_sites?.nadi_name || "NADI Site"} ({participant.states?.state_name || "State"})
+                  {participant.nadi_sites?.site_name || "NADI Site"} ({participant.states?.state_name || "State"})
                 </span>
               </div>
             </div>

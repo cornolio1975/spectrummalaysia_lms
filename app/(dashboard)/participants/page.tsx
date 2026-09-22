@@ -58,7 +58,7 @@ export default async function ParticipantsPage() {
                           {p.gender}
                         </span>
                       </td>
-                      <td style={{ fontSize: "0.82rem" }}>{p.nadi_sites?.nadi_name || "-"}</td>
+                      <td style={{ fontSize: "0.82rem" }}>{p.nadi_sites?.site_name || "-"}</td>
                       <td style={{ fontSize: "0.82rem" }}>{p.states?.state_name || "-"}</td>
                       <td><span className="badge badge-success">{p.status}</span></td>
                       <td style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>

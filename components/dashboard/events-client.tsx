@@ -36,7 +36,7 @@ export function EventsClient({ events, programmes, nadiSites }: EventsClientProp
   };
 
   const filteredEvents = events.filter((event) => {
-    const searchString = `${event.programmes?.programme_name} ${event.nadi_sites?.nadi_name}`.toLowerCase();
+    const searchString = `${event.programmes?.programme_name} ${event.nadi_sites?.site_name}`.toLowerCase();
     return searchString.includes(searchTerm.toLowerCase());
   });
 
@@ -92,7 +92,7 @@ export function EventsClient({ events, programmes, nadiSites }: EventsClientProp
               {filteredEvents.length > 0 ? filteredEvents.map((evt) => (
                 <tr key={evt.id}>
                   <td style={{ fontWeight: 600 }}>{evt.programmes?.programme_name}</td>
-                  <td>{evt.nadi_sites?.nadi_name}</td>
+                  <td>{evt.nadi_sites?.site_name}</td>
                   <td>
                     <div style={{ fontSize: "0.82rem" }}>
                       {new Date(evt.start_date).toLocaleDateString()} - {new Date(evt.end_date).toLocaleDateString()}

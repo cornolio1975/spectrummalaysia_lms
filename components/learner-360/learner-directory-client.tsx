@@ -48,7 +48,7 @@ export function LearnerDirectoryClient({ participants, openInterventions }: Prop
       p.full_name?.toLowerCase().includes(search.toLowerCase()) ||
       p.ic_number?.toLowerCase().includes(search.toLowerCase()) ||
       p.email?.toLowerCase().includes(search.toLowerCase()) ||
-      p.nadi_sites?.nadi_name?.toLowerCase().includes(search.toLowerCase());
+      p.nadi_sites?.site_name?.toLowerCase().includes(search.toLowerCase());
 
     const isAtRisk = atRiskIds.has(p.id);
     const matchesFilter =
@@ -176,7 +176,7 @@ export function LearnerDirectoryClient({ participants, openInterventions }: Prop
                         <div className="flex items-center gap-1.5 text-xs text-gray-700">
                           <MapPin className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                           <span>
-                            {p.nadi_sites?.nadi_name || "Central"} ({p.states?.state_name || "MY"})
+                            {p.nadi_sites?.site_name || "Central"} ({p.states?.state_name || "MY"})
                           </span>
                         </div>
                       </td>

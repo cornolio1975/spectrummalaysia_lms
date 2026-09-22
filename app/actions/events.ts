@@ -12,7 +12,7 @@ export async function getEvents() {
     .select(`
       *,
       programmes (programme_name, programme_code),
-      nadi_sites (nadi_name)
+      nadi_sites (site_name)
     `)
     .order("start_date", { ascending: false });
 
@@ -32,7 +32,7 @@ export async function getEventById(id: string) {
     .select(`
       *,
       programmes (programme_name, programme_code),
-      nadi_sites (nadi_name)
+      nadi_sites (site_name)
     `)
     .eq("id", id)
     .single();

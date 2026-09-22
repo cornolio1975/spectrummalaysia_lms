@@ -19,6 +19,26 @@ export async function updateUserRole(userId: string, newRole: string) {
     return { error: error.message };
   }
 
+  // Handle trainer table sync
+  if (newRole === 'trainer') {
+    const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', userId).single();
+    if (profile) {
+      const { data: existingTrainer } = await supabase.from('trainers').select('id').eq('profile_id', userId).maybeSingle();
+      if (existingTrainer) {
+        await supabase.from('trainers').update({ status: 'active', name: profile.full_name }).eq('id', existingTrainer.id);
+      } else {
+        await supabase.from('trainers').insert({
+          profile_id: userId,
+          name: profile.full_name,
+          status: 'active'
+        });
+      }
+    }
+  } else {
+    // If they are no longer a trainer, set inactive (we shouldn't delete to preserve history)
+    await supabase.from('trainers').update({ status: 'inactive' }).eq('profile_id', userId);
+  }
+
   revalidatePath("/admin/users");
   return { success: true };
 }
@@ -105,8 +125,23 @@ export async function createUser(data: { email: string; fullName: string; role: 
       .eq("id", authData.user.id);
       
     if (profileError) {
-      // We log it, but the user is created
       console.error("Failed to update initial role:", profileError);
+    }
+
+    // 3. If role is trainer, insert into trainers table
+    if (data.role === 'trainer') {
+      const { error: trainerError } = await supabase
+        .from("trainers")
+        .insert({
+          profile_id: authData.user.id,
+          name: data.fullName,
+          email: data.email,
+          status: 'active'
+        });
+      
+      if (trainerError) {
+        console.error("Failed to create trainer record:", trainerError);
+      }
     }
 
     revalidatePath("/admin/users");

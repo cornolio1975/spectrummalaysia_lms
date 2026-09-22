@@ -213,7 +213,7 @@ export function LiveClassesClient({ classes, total, stats, programmes, trainers,
                       {cls.title}
                     </Link>
                     {cls.nadi_sites && (
-                      <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{cls.nadi_sites.nadi_name}</div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{cls.nadi_sites.site_name}</div>
                     )}
                   </td>
                   <td>

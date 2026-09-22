@@ -221,7 +221,7 @@ export async function getLiveTrainingReport(filters: {
       id, title, scheduled_start, scheduled_end,
       programmes(programme_name),
       trainers(name),
-      nadi_sites(nadi_name),
+      nadi_sites(site_name),
       states(state_name),
       live_class_attendance(attendance_status)
     `)
@@ -256,7 +256,7 @@ export async function getLiveTrainingReport(filters: {
       title: cls.title,
       programme: cls.programmes?.programme_name || "—",
       trainer: cls.trainers?.name || "—",
-      nadi: cls.nadi_sites?.nadi_name || "—",
+      nadi: cls.nadi_sites?.site_name || "—",
       state: cls.states?.state_name || "—",
       total,
       present,
