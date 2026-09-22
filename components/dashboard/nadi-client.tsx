@@ -9,9 +9,10 @@ import { useRouter } from "next/navigation";
 interface NadiClientProps {
   nadiSites: any[];
   states: any[];
+  canEdit?: boolean;
 }
 
-export function NadiClient({ nadiSites, states }: NadiClientProps) {
+export function NadiClient({ nadiSites, states, canEdit = true }: NadiClientProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingNadi, setEditingNadi] = useState<any | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,7 +51,9 @@ export function NadiClient({ nadiSites, states }: NadiClientProps) {
             <h1>NADI Sites</h1>
             <p>Manage and monitor all NADI community centres</p>
           </div>
-          <button className="btn btn-primary btn-sm" onClick={handleOpenNew}>+ Add NADI Site</button>
+          {canEdit && (
+            <button className="btn btn-primary btn-sm" onClick={handleOpenNew}>+ Add NADI Site</button>
+          )}
         </div>
       </div>
       
@@ -126,10 +129,14 @@ export function NadiClient({ nadiSites, states }: NadiClientProps) {
                   <td style={{ fontSize: "0.82rem" }}>{nadi.contact_person || "-"}</td>
                   <td><span className={`badge ${nadi.status === 'In Operation' ? 'badge-success' : 'badge-neutral'}`}>{nadi.status}</span></td>
                   <td>
-                    <div style={{ display: "flex", gap: "4px" }}>
-                      <button className="btn btn-outline btn-sm" onClick={() => handleOpenEdit(nadi)}>Edit</button>
-                      <button className="btn btn-ghost btn-sm text-red-500" onClick={() => handleDelete(nadi.id)}>Delete</button>
-                    </div>
+                    {canEdit ? (
+                      <div style={{ display: "flex", gap: "4px" }}>
+                        <button className="btn btn-outline btn-sm" onClick={() => handleOpenEdit(nadi)}>Edit</button>
+                        <button className="btn btn-ghost btn-sm text-red-500" onClick={() => handleDelete(nadi.id)}>Delete</button>
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-sm">View Only</span>
+                    )}
                   </td>
                 </tr>
               )) : (

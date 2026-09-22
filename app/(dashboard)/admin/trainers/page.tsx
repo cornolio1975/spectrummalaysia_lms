@@ -3,6 +3,7 @@ import { getAllTrainers } from "@/app/actions/trainers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { TrainerListTable } from "./trainer-list-table";
+import { hasPermission } from "@/utils/rbac";
 
 export const metadata = {
   title: "All Trainers | SpectrumMY LMS",
@@ -16,6 +17,13 @@ export default async function AdminTrainersPage({
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", session.user.id)
+    .single();
+  const canEditTrainers = hasPermission(profile?.role, "admin.trainers.edit");
 
   const resolvedParams = await searchParams;
   const statusFilter = typeof resolvedParams.status === 'string' ? resolvedParams.status : 'all';
@@ -50,9 +58,11 @@ export default async function AdminTrainersPage({
           <p>{getPageDescription()}</p>
         </div>
         <div className="header-actions">
-          <Link href="/events/trainers/new" className="btn btn-primary">
-            + Add Trainer
-          </Link>
+          {canEditTrainers && (
+            <Link href="/events/trainers/new" className="btn btn-primary">
+              + Add Trainer
+            </Link>
+          )}
         </div>
       </div>
 
@@ -62,7 +72,7 @@ export default async function AdminTrainersPage({
             Error loading trainers: {error}
           </div>
         ) : (
-          <TrainerListTable trainers={trainers || []} statusFilter={statusFilter} />
+          <TrainerListTable trainers={trainers || []} statusFilter={statusFilter} canEdit={canEditTrainers} />
         )}
       </div>
     </div>

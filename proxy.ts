@@ -36,6 +36,63 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // RBAC Route Protection Logic
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    const role = profile?.role;
+
+    if (pathname.startsWith('/admin')) {
+      if (role === 'observer') {
+        const allowedObserverAdminRoutes = [
+          '/admin/analytics',
+          '/admin/trainers',
+          '/admin/trainers/dashboard',
+          '/admin/trainers/profiles',
+          '/admin/trainers/credentials',
+          '/admin/trainers/assignments',
+          '/admin/trainers/performance',
+          '/admin/trainers/attendance',
+          '/admin/trainers/reports',
+          '/admin/trainers/audit',
+          '/admin/audit',
+        ];
+
+        const explicitlyDeniedPaths = [
+          '/admin/users',
+          '/admin/users/roles',
+          '/admin/settings',
+          '/admin/trainers/new',
+          '/admin/trainers/applications'
+        ];
+
+        if (explicitlyDeniedPaths.some(p => pathname === p || pathname.startsWith(p + '/'))) {
+          const redirectUrl = request.nextUrl.clone();
+          redirectUrl.pathname = '/access-denied';
+          return NextResponse.redirect(redirectUrl);
+        }
+
+        const isAllowed = allowedObserverAdminRoutes.some(p => pathname === p || pathname.startsWith(p + '/'));
+        
+        if (!isAllowed) {
+           if (pathname !== '/admin') {
+             const redirectUrl = request.nextUrl.clone();
+             redirectUrl.pathname = '/access-denied';
+             return NextResponse.redirect(redirectUrl);
+           }
+        }
+      } else if (role === 'learner' || role === 'participant' || role === 'trainer') {
+        const redirectUrl = request.nextUrl.clone();
+        redirectUrl.pathname = '/access-denied';
+        return NextResponse.redirect(redirectUrl);
+      }
+    }
+  }
+
   return supabaseResponse;
 }
 

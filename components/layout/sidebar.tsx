@@ -4,125 +4,143 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 
+import { hasPermission, Permission } from "@/utils/rbac";
+
 interface NavItem {
   icon: string;
   label: string;
   href?: string;
-  children?: { label: string; href: string }[];
+  permission?: Permission;
+  children?: { label: string; href: string; permission?: Permission }[];
 }
 
 const ADMIN_NAV_STRUCTURE: NavItem[] = [
-  { icon: "🏠", label: "Dashboard", href: "/dashboard" },
+  { icon: "🏠", label: "Dashboard", href: "/dashboard", permission: 'admin.dashboard.view' },
   {
     icon: "👥",
     label: "USER & ROLE MANAGEMENT",
+    permission: 'admin.users.view',
     children: [
-      { label: "All Users", href: "/admin/users" },
-      { label: "Administrators", href: "/admin/users?role=admin" },
-      { label: "Trainers", href: "/admin/users?role=trainer" },
-      { label: "Learners", href: "/admin/users?role=learner" },
-      { label: "Roles & Permissions", href: "/admin/settings" },
+      { label: "All Users", href: "/admin/users", permission: 'admin.users.view' },
+      { label: "Administrators", href: "/admin/users?role=admin", permission: 'admin.users.view' },
+      { label: "Observers", href: "/admin/users?role=observer", permission: 'admin.users.view' },
+      { label: "Trainers", href: "/admin/users?role=trainer", permission: 'admin.users.view' },
+      { label: "Learners", href: "/admin/users?role=learner", permission: 'admin.users.view' },
+      { label: "Roles & Permissions", href: "/admin/users/roles", permission: 'admin.roles.view' },
     ],
   },
   {
     icon: "📚",
     label: "Courses & Curriculum",
+    permission: 'admin.courses.view',
     children: [
-      { label: "Course Management", href: "/courses" },
-      { label: "Course Catalogue", href: "/catalogue" },
+      { label: "Course Management", href: "/courses", permission: 'admin.courses.view' },
+      { label: "Course Catalogue", href: "/catalogue", permission: 'admin.courses.view' },
     ],
   },
   {
     icon: "🎯",
     label: "Programme Management",
     href: "/programmes",
+    permission: 'admin.programmes.view',
   },
   {
     icon: "🎖",
     label: "Micro-credentials",
+    permission: 'admin.certificates.view',
     children: [
-      { label: "Credential Engine", href: "/credentials" },
-      { label: "Digital Wallet", href: "/wallet" },
+      { label: "Credential Engine", href: "/credentials", permission: 'admin.certificates.view' },
+      { label: "Digital Wallet", href: "/wallet", permission: 'admin.certificates.view' },
     ],
   },
   {
     icon: "📈",
     label: "Skills & Competencies",
     href: "/skills",
+    permission: 'admin.courses.view', // Mapped to courses for now
   },
   {
     icon: "📝",
     label: "Practical & RPL",
+    permission: 'admin.assessments.view',
     children: [
-      { label: "Practical Assessments", href: "/practical-assessments" },
-      { label: "RPL Applications", href: "/rpl" },
+      { label: "Practical Assessments", href: "/practical-assessments", permission: 'admin.assessments.view' },
+      { label: "RPL Applications", href: "/rpl", permission: 'admin.assessments.view' },
     ],
   },
   {
     icon: "📍",
     label: "NADI SITE MANAGEMENT",
+    permission: 'admin.nadi.view',
     children: [
-      { label: "Dashboard", href: "/admin/analytics/nadi" },
-      { label: "NADI Sites", href: "/nadi" },
-      { label: "Participants", href: "/participants" },
-      { label: "Classes & Sessions", href: "/events" },
-      { label: "Analytics", href: "/admin/analytics" },
+      { label: "Dashboard", href: "/admin/analytics/nadi", permission: 'admin.nadi.view' },
+      { label: "NADI Sites", href: "/nadi", permission: 'admin.nadi.view' },
+      { label: "Participants", href: "/participants", permission: 'admin.nadi.view' },
+      { label: "Classes & Sessions", href: "/events", permission: 'admin.nadi.view' },
+      { label: "Analytics", href: "/admin/analytics", permission: 'admin.analytics.view' },
     ],
   },
   {
     icon: "👨‍🎓",
     label: "Learner Management",
+    permission: 'admin.learners.view',
     children: [
-      { label: "Learner Profiles", href: "/participants" },
-      { label: "Learner 360", href: "/learner-360" },
+      { label: "Learner Profiles", href: "/participants", permission: 'admin.learners.view' },
+      { label: "Learner 360", href: "/learner-360", permission: 'admin.learners.view' },
     ],
   },
   {
     icon: "👨‍🏫",
     label: "Trainer Management",
+    permission: 'admin.trainers.view',
     children: [
-      { label: "Dashboard", href: "/admin/trainers/dashboard" },
-      { label: "Trainers Directory", href: "/admin/trainers" },
-      { label: "Applications", href: "/admin/trainers/applications" },
-      { label: "Assignments", href: "/admin/trainers/assignments" },
+      { label: "Dashboard", href: "/admin/trainers/dashboard", permission: 'admin.trainers.view' },
+      { label: "Trainers Directory", href: "/admin/trainers", permission: 'admin.trainers.view' },
+      { label: "Applications", href: "/admin/trainers/applications", permission: 'admin.trainers.view' },
+      { label: "Assignments", href: "/admin/trainers/assignments", permission: 'admin.trainers.view' },
     ],
   },
   {
     icon: "📅",
     label: "Events & Sessions",
     href: "/events",
+    permission: 'admin.nadi.view', // Mapped to nadi events
   },
   {
     icon: "🎥",
     label: "Live Training",
+    permission: 'admin.courses.view',
     children: [
-      { label: "Live Classes", href: "/live-classes" },
-      { label: "My Classes", href: "/my-classes" },
+      { label: "Live Classes", href: "/live-classes", permission: 'admin.courses.view' },
+      { label: "My Classes", href: "/my-classes", permission: 'admin.courses.view' },
     ],
   },
   {
     icon: "🎓",
     label: "Certificates",
     href: "/certificates",
+    permission: 'admin.certificates.view',
   },
   {
     icon: "📋",
     label: "Reports & KPIs",
+    permission: 'admin.reports.view',
     children: [
-      { label: "KPI Performance", href: "/reports/kpis" },
-      { label: "Live Training Analytics", href: "/reports/live-training" },
-      { label: "Organisation Reporting", href: "/reports/organisation" },
-      { label: "Analytics", href: "/admin/analytics" },
+      { label: "KPI Performance", href: "/reports/kpis", permission: 'admin.reports.view' },
+      { label: "Live Training Analytics", href: "/reports/live-training", permission: 'admin.reports.view' },
+      { label: "Organisation Reporting", href: "/reports/organisation", permission: 'admin.reports.view' },
+      { label: "Analytics", href: "/admin/analytics", permission: 'admin.analytics.view' },
     ],
   },
-  { icon: "🗂", label: "Media Repository", href: "/media" },
+  { icon: "🗂", label: "Media Repository", href: "/media", permission: 'admin.courses.view' },
   {
     icon: "⚙",
     label: "Administration",
+    permission: 'admin.settings.view',
     children: [
-      { label: "AI Provider Management", href: "/admin/ai/providers" },
-      { label: "Audit Logs", href: "/admin/audit" },
-      { label: "System Configuration", href: "/admin/settings" },
+      { label: "AI Provider Management", href: "/admin/ai/providers", permission: 'admin.settings.view' },
+      { label: "Audit Logs", href: "/admin/audit", permission: 'admin.audit_logs.view' },
+      { label: "System Configuration", href: "/admin/settings", permission: 'admin.settings.view' },
     ],
   },
 ];
@@ -194,10 +212,82 @@ export default function Sidebar({ isOpen, onClose, userRole, isCollapsed, onTogg
   let NAV_STRUCTURE = ADMIN_NAV_STRUCTURE;
   const role = userRole?.toLowerCase() || "";
   
-  if (role.includes("trainer")) {
+  if (role === "trainer") {
     NAV_STRUCTURE = TRAINER_NAV_STRUCTURE;
-  } else if (role.includes("learner") || role.includes("participant")) {
+  } else if (role === "learner" || role === "participant") {
     NAV_STRUCTURE = LEARNER_NAV_STRUCTURE;
+  } else if (role === "observer") {
+    // Observer nav structure based on requirements
+    NAV_STRUCTURE = [
+      { icon: "🏠", label: "Home", href: "/dashboard" },
+      {
+        icon: "👁",
+        label: "OBSERVATION",
+        children: [
+          { label: "Dashboard", href: "/dashboard" },
+          { label: "Analytics", href: "/admin/analytics" },
+          { label: "Reports", href: "/reports/organisation" },
+        ],
+      },
+      {
+        icon: "👥",
+        label: "PEOPLE",
+        children: [
+          { label: "Trainers", href: "/admin/trainers" },
+          { label: "Learners", href: "/participants" },
+        ],
+      },
+      {
+        icon: "📚",
+        label: "LEARNING",
+        children: [
+          { label: "Courses", href: "/courses" },
+          { label: "Enrolments", href: "/enrolments" },
+          { label: "Progress", href: "/progress" },
+        ],
+      },
+      {
+        icon: "📍",
+        label: "NADI / PROGRAMMES",
+        children: [
+          { label: "NADI Site Management", href: "/nadi" },
+          { label: "Programmes", href: "/programmes" },
+          { label: "Events", href: "/events" },
+        ],
+      },
+      {
+        icon: "📈",
+        label: "PERFORMANCE",
+        children: [
+          { label: "Attendance", href: "/admin/trainers/attendance" },
+          { label: "Assessments", href: "/practical-assessments" },
+          { label: "Certificates", href: "/certificates" },
+        ],
+      },
+      {
+        icon: "📋",
+        label: "GOVERNANCE",
+        children: [
+          { label: "Audit Logs", href: "/admin/audit" },
+        ],
+      },
+    ];
+  } else {
+    // Filter ADMIN_NAV_STRUCTURE based on permissions for other admins
+    NAV_STRUCTURE = ADMIN_NAV_STRUCTURE
+      .map(section => {
+        if (!section.permission || hasPermission(role, section.permission)) {
+          if (section.children) {
+            const filteredChildren = section.children.filter(child => 
+              !child.permission || hasPermission(role, child.permission)
+            );
+            return { ...section, children: filteredChildren };
+          }
+          return section;
+        }
+        return null;
+      })
+      .filter(Boolean) as NavItem[];
   }
 
   // Auto-expand the section containing current path
@@ -274,12 +364,13 @@ export default function Sidebar({ isOpen, onClose, userRole, isCollapsed, onTogg
                 <div
                   style={{
                     fontSize: "0.6rem",
-                    color: "rgba(255,255,255,0.5)",
+                    color: role === "observer" ? "#a855f7" : "rgba(255,255,255,0.5)",
                     letterSpacing: "0.04em",
                     marginTop: "1px",
+                    fontWeight: role === "observer" ? "bold" : "normal",
                   }}
                 >
-                  PROGRAMME & LEARNING
+                  {role === "observer" ? "OBSERVER" : "PROGRAMME & LEARNING"}
                 </div>
               </div>
             </div>

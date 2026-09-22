@@ -52,7 +52,7 @@ export default async function Page() {
                     {new Date(row.created_at).toLocaleDateString()}
                   </td>
                   <td className="p-4 text-right">
-                    <button className="text-sm font-medium text-primary-600 hover:text-primary-800">View</button>
+                    <Link href={`/admin/trainers/${row.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-800">View</Link>
                   </td>
                 </tr>
               ))

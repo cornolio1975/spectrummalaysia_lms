@@ -1,43 +1,40 @@
 import { createClient } from "@/utils/supabase/server";
-import { getTrainerApplications } from "@/app/actions/trainers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { TrainerListTable } from "../trainer-list-table";
+import { TrainerApplicationsClient } from "./TrainerApplicationsClient";
+import Link from "next/link";
 
 export const metadata = {
   title: "Trainer Applications | SpectrumMY LMS",
 };
 
-export default async function TrainerApplicationsPage() {
+export default async function Page() {
   const supabase = await createClient();
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) redirect("/login");
 
-  const { data: trainers, error } = await getTrainerApplications();
+  // Fetch all trainers to show in the Kanban board
+  const { data: applications, error } = await supabase
+    .from("trainers")
+    .select("*")
+    .order("created_at", { ascending: false });
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
-      <div className="page-header">
+      <div className="page-header mb-8 flex justify-between items-center">
         <div>
-          <h1>Trainer Applications</h1>
-          <p>Review and approve new trainer registrations.</p>
+          <h1 className="text-2xl font-bold mb-2">Trainer Applications</h1>
+          <p className="text-gray-500">Manage trainer approval workflows</p>
         </div>
-        <div className="header-actions">
-          <Link href="/events/trainers/new" className="btn btn-primary">
-            + Add Trainer
-          </Link>
-        </div>
+        <Link href="/events/trainers/new" className="btn btn-primary">+ Add New</Link>
       </div>
 
-      <div className="page-body">
-        {error ? (
-          <div className="p-8 text-center text-red-500 bg-white rounded-lg border">
-            Error loading applications: {error}
-          </div>
-        ) : (
-          <TrainerListTable trainers={trainers || []} statusFilter="pending" />
-        )}
-      </div>
+      {error ? (
+        <div className="p-8 text-center text-red-500 bg-white rounded-lg border">
+          Error loading applications: {error.message}
+        </div>
+      ) : (
+        <TrainerApplicationsClient applications={applications || []} />
+      )}
     </div>
   );
 }

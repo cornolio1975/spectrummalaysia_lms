@@ -20,8 +20,8 @@ export function TrainerTabs() {
   ];
 
   return (
-    <div className="bg-white border-b border-gray-200 px-6 py-2 mb-6 shadow-sm overflow-x-auto whitespace-nowrap sticky top-0 z-10">
-      <div className="flex gap-1 max-w-[1400px] mx-auto">
+    <div className="bg-white border-b border-gray-200 px-6 py-2 mb-6 shadow-sm sticky top-0 z-10">
+      <div className="flex flex-wrap gap-1 max-w-[1400px] mx-auto">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href;
           return (

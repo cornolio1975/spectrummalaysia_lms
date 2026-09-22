@@ -57,6 +57,9 @@ export default async function UsersPage({
   } else if (roleFilter === "learner") {
     pageTitle = "Learner Profiles";
     pageDescription = "Manage learner accounts across the system.";
+  } else if (roleFilter === "observer") {
+    pageTitle = "Observer Profiles";
+    pageDescription = "Manage observer accounts and their monitoring scopes.";
   }
 
   return (
