@@ -183,6 +183,8 @@ CREATE INDEX IF NOT EXISTS idx_join_log_part  ON live_class_join_log(participant
 
 -- ─── UPDATE SYSTEM SETTINGS WITH GOOGLE & ATTENDANCE CONFIG ────────────────
 
+ALTER TABLE system_settings ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT false;
+
 INSERT INTO system_settings (category, setting_key, setting_value, description, is_public)
 VALUES
   ('google', 'google_integration_enabled',    'false',               'Enable Google Meet integration',                         false),
