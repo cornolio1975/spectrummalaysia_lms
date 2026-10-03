@@ -2,8 +2,7 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
 export default async function SecurityCommandCentre() {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient();
 
   // Fetch recent high severity audit logs (assuming structure from our Phase 1 migration)
   const { data: logs } = await supabase

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateUserRole, updateUserAssignment, toggleUserStatus, deleteUser } from "@/app/actions/users";
+import { updateUserRole, updateUserAssignment, toggleUserStatus, updateAccountStatus, deleteUser } from "@/app/actions/users";
+import { sendWelcomeEmail } from "@/app/actions/email";
 import { AddUserModal } from "./add-user-modal";
 import { ResetPasswordModal } from "./reset-password-modal";
 import { EditUserModal } from "./edit-user-modal";
@@ -10,6 +11,7 @@ type User = {
   id: string;
   full_name: string | null;
   role: string;
+  account_status: "pending" | "active" | "inactive";
   is_active: boolean;
   state_id: string | null;
   nadi_id: string | null;
@@ -27,6 +29,7 @@ const ROLES = [
   { value: "registrar", label: "Registrar" },
   { value: "observer", label: "Observer" },
   { value: "learner", label: "Learner" },
+  { value: "guest", label: "Guest" },
 ];
 
 export function UserTable({
@@ -82,6 +85,17 @@ export function UserTable({
     });
   };
 
+  const handleAccountStatusChange = (userId: string, newStatus: "pending" | "active" | "inactive") => {
+    startTransition(async () => {
+      const { error } = await updateAccountStatus(userId, newStatus);
+      if (error) {
+        showToast(error, "error");
+      } else {
+        showToast("Account status updated successfully", "success");
+      }
+    });
+  };
+
   const handleDeleteUser = (userId: string) => {
     if (!window.confirm("Are you sure you want to permanently delete this user? This action cannot be undone.")) return;
     
@@ -91,6 +105,17 @@ export function UserTable({
         showToast(error, "error");
       } else {
         showToast("User deleted successfully", "success");
+      }
+    });
+  };
+
+  const handleSendEmail = (userId: string) => {
+    startTransition(async () => {
+      const { error } = await sendWelcomeEmail(userId);
+      if (error) {
+        showToast(error, "error");
+      } else {
+        showToast("Welcome email sent successfully!", "success");
       }
     });
   };
@@ -203,7 +228,7 @@ export function UserTable({
                       </select>
                     )}
                     
-                    {user.role === "nadi_admin" && (
+                    {(user.role === "nadi_admin" || user.role === "learner") && (
                       <select
                         className="form-input text-sm py-1.5 px-3 h-auto min-w-[160px] bg-white cursor-pointer"
                         value={user.nadi_id || "none"}
@@ -217,24 +242,27 @@ export function UserTable({
                       </select>
                     )}
 
-                    {user.role !== "state_admin" && user.role !== "nadi_admin" && (
+                    {user.role !== "state_admin" && user.role !== "nadi_admin" && user.role !== "learner" && (
                       <span className="text-sm text-[var(--text-muted)] italic">N/A</span>
                     )}
                   </td>
 
                   {/* STATUS */}
                   <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleStatusToggle(user.id, user.is_active)}
-                      disabled={isPending}
-                      className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                        user.is_active 
-                          ? "bg-emerald-100 text-emerald-800 hover:bg-emerald-200" 
-                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    <select
+                      className={`form-input text-sm py-1.5 px-3 h-auto min-w-[120px] cursor-pointer font-medium rounded-full ${
+                        user.account_status === 'active' ? "bg-emerald-100 text-emerald-800" :
+                        user.account_status === 'pending' ? "bg-orange-100 text-orange-800" :
+                        "bg-slate-100 text-slate-600"
                       }`}
+                      value={user.account_status || 'pending'}
+                      onChange={(e) => handleAccountStatusChange(user.id, e.target.value as any)}
+                      disabled={isPending}
                     >
-                      {user.is_active ? "Active" : "Disabled"}
-                    </button>
+                      <option value="pending">Pending</option>
+                      <option value="active">Active</option>
+                      <option value="inactive">Inactive</option>
+                    </select>
                   </td>
 
                   {/* DATE */}
@@ -244,6 +272,28 @@ export function UserTable({
 
                   {/* ACTIONS */}
                   <td className="px-6 py-4 text-right">
+                    <button
+                      onClick={() => handleSendEmail(user.id)}
+                      disabled={isPending}
+                      className="text-blue-500 hover:text-blue-700 transition-colors p-2 mr-1"
+                      title="Send Welcome Email"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                      </svg>
+                    </button>
+                    {user.role === "learner" && (
+                      <a
+                        href={`/admin/learner-assignments?userId=${user.id}`}
+                        className="text-indigo-600 hover:text-indigo-800 transition-colors p-2 mr-1 inline-block"
+                        title="Assign NADI Site & Courses"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                      </a>
+                    )}
                     <button
                       onClick={() => setEditModalUser({ 
                         id: user.id, 

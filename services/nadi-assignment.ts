@@ -1,3 +1,5 @@
+"use server";
+
 import { createClient } from '@/utils/supabase/server';
 
 export type NadiSiteSuggestion = {
@@ -15,7 +17,7 @@ export async function suggestNadiSite(
   city: string,
   stateId: string
 ): Promise<NadiSiteSuggestion[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // 1. Exact postcode match (Priority 1)
   const { data: exactPostcode } = await supabase

@@ -67,6 +67,7 @@ export default async function ParticipantsPage() {
                       <td>
                         <div style={{ display: "flex", gap: "4px" }}>
                           <Link href={`/participants/${p.id}/edit`} className="btn btn-ghost btn-sm">Edit</Link>
+                          <Link href={`/admin/learner-assignments?userId=${p.id}`} className="btn btn-outline btn-sm text-indigo-600 border-indigo-200 hover:bg-indigo-50">Assign</Link>
                         </div>
                       </td>
                     </tr>

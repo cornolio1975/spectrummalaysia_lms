@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import type { Metadata } from "next";
 import DashboardClient from "@/components/dashboard/dashboard-client";
@@ -20,6 +21,7 @@ async function getDashboardStats(supabase: Awaited<ReturnType<typeof createClien
     eventsResult,
     certificatesResult,
     activeLearnersResult,
+    pendingUsersResult,
   ] = await Promise.allSettled([
     supabase.from("users").select("id", { count: "exact", head: true }), // Assuming public.users or auth.users view exists; falling back to participants if not
     supabase.from("trainers").select("id", { count: "exact", head: true }),
@@ -32,6 +34,7 @@ async function getDashboardStats(supabase: Awaited<ReturnType<typeof createClien
     supabase.from("events").select("id", { count: "exact", head: true }),
     supabase.from("certificates").select("id", { count: "exact", head: true }),
     supabase.from("event_participants").select("participant_id", { count: "exact", head: true }).eq("status", "registered"),
+    supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "guest").eq("account_status", "pending"),
   ]);
 
   const safeCount = (result: PromiseSettledResult<{ count: number | null }>) =>
@@ -57,11 +60,28 @@ async function getDashboardStats(supabase: Awaited<ReturnType<typeof createClien
     courseCompletionRate: completionRate,
     attendanceRate: 85, 
     certificatesIssued: completedLearners || 1218,
+    pendingUsers: safeCount(pendingUsersResult as any) || 0,
   };
 }
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role === "learner" || profile?.role === "participant") {
+      redirect("/learner-workspace");
+    } else if (profile?.role === "trainer") {
+      redirect("/trainer-workspace");
+    }
+  }
 
   const stats = await getDashboardStats(supabase);
 

@@ -15,6 +15,7 @@ interface DashboardStats {
   courseCompletionRate: number;
   attendanceRate: number;
   certificatesIssued: number;
+  pendingUsers?: number;
 }
 
 interface KpiCardProps {
@@ -133,6 +134,46 @@ export default function DashboardClient({ stats }: DashboardClientProps) {
             </span>
           </div>
         </div>
+        
+        {stats.pendingUsers !== undefined && stats.pendingUsers > 0 && (
+          <div style={{
+            marginTop: "16px",
+            padding: "16px",
+            backgroundColor: "#fffbeb",
+            border: "1px solid #fef3c7",
+            borderLeft: "4px solid #f59e0b",
+            borderRadius: "6px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.05)"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+              <span style={{ fontSize: "20px" }}>🔔</span>
+              <div>
+                <h4 style={{ margin: 0, color: "#92400e", fontSize: "14px", fontWeight: 600 }}>Action Required: New Joinees Pending Authorization</h4>
+                <p style={{ margin: "4px 0 0 0", color: "#b45309", fontSize: "13px" }}>
+                  There are currently <strong>{stats.pendingUsers}</strong> new user{stats.pendingUsers > 1 ? 's' : ''} waiting for approval to join the platform.
+                </p>
+              </div>
+            </div>
+            <a 
+              href="/admin/users" 
+              style={{
+                backgroundColor: "#f59e0b",
+                color: "white",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                fontSize: "13px",
+                fontWeight: 500,
+                textDecoration: "none",
+                whiteSpace: "nowrap"
+              }}
+            >
+              Review Users
+            </a>
+          </div>
+        )}
       </div>
 
       <div className="page-body">

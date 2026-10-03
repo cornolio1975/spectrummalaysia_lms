@@ -6,17 +6,32 @@ import { revalidatePath } from "next/cache";
 
 export async function updateUserRole(userId: string, newRole: string) {
   const supabase = await createClient();
+  
+  // Verify caller is authorized to make this change
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+  
+  const { data: callerProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const allowedRoles = ['super_admin', 'programme_admin', 'state_admin', 'nadi_admin'];
+  if (!callerProfile || !allowedRoles.includes(callerProfile.role)) {
+    return { error: "Unauthorized: You don't have permission to change roles" };
+  }
 
-  // The database RLS policy ("profiles_write_admin") restricts UPDATE on profiles
-  // to only users whose auth_role() is 'super_admin'.
-  const { error } = await supabase
+  // Use admin client to bypass RLS profiles_write_admin policy which only allows super_admin
+  const adminClient = createAdminClient();
+  const { data, error } = await adminClient
     .from("profiles")
-    .update({ role: newRole })
-    .eq("id", userId);
+    .update({ role: newRole, account_status: 'active' })
+    .eq("id", userId)
+    .select();
 
   if (error) {
     console.error("Failed to update user role:", error);
     return { error: error.message };
+  }
+  
+  if (!data || data.length === 0) {
+     return { error: "Failed to update: User not found or RLS blocked" };
   }
 
   // Handle trainer table sync
@@ -30,6 +45,7 @@ export async function updateUserRole(userId: string, newRole: string) {
         await supabase.from('trainers').insert({
           profile_id: userId,
           name: profile.full_name,
+          email: '', // Requires auth.users join to get real email, using empty for now
           status: 'active'
         });
       }
@@ -37,6 +53,21 @@ export async function updateUserRole(userId: string, newRole: string) {
   } else {
     // If they are no longer a trainer, set inactive (we shouldn't delete to preserve history)
     await supabase.from('trainers').update({ status: 'inactive' }).eq('profile_id', userId);
+  }
+
+  // Handle learner (participants) table sync
+  if (newRole === 'learner') {
+    const { data: profile } = await supabase.from('profiles').select('full_name').eq('id', userId).single();
+    if (profile) {
+      const { data: existingParticipant } = await supabase.from('participants').select('id').eq('id', userId).maybeSingle();
+      if (!existingParticipant) {
+        await supabase.from('participants').insert({
+          id: userId,
+          full_name: profile.full_name || 'Unknown',
+          email: '' // Requires auth.users join to get real email
+        });
+      }
+    }
   }
 
   revalidatePath("/admin/users");
@@ -75,6 +106,39 @@ export async function toggleUserStatus(userId: string, currentStatus: boolean) {
   if (error) {
     console.error("Failed to toggle user status:", error);
     return { error: error.message };
+  }
+
+  revalidatePath("/admin/users");
+  return { success: true };
+}
+
+export async function updateAccountStatus(userId: string, status: "pending" | "active" | "inactive") {
+  const supabase = await createClient();
+  
+  // Verify caller is authorized to make this change
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+  
+  const { data: callerProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+  const allowedRoles = ['super_admin', 'programme_admin', 'state_admin', 'nadi_admin'];
+  if (!callerProfile || !allowedRoles.includes(callerProfile.role)) {
+    return { error: "Unauthorized: You don't have permission to change status" };
+  }
+
+  const adminClient = createAdminClient();
+  const { data, error } = await adminClient
+    .from("profiles")
+    .update({ account_status: status })
+    .eq("id", userId)
+    .select();
+
+  if (error) {
+    console.error("Failed to update account status:", error);
+    return { error: error.message };
+  }
+  
+  if (!data || data.length === 0) {
+    return { error: "Failed to update: User not found or RLS blocked" };
   }
 
   revalidatePath("/admin/users");

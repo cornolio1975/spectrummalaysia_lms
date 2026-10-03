@@ -139,6 +139,7 @@ const ADMIN_NAV_STRUCTURE: NavItem[] = [
     permission: 'admin.settings.view',
     children: [
       { label: "AI Provider Management", href: "/admin/ai/providers", permission: 'admin.settings.view' },
+      { label: "Google Integration", href: "/admin/google", permission: 'admin.settings.view' },
       { label: "Audit Logs", href: "/admin/audit", permission: 'admin.audit_logs.view' },
       { label: "System Configuration", href: "/admin/settings", permission: 'admin.settings.view' },
     ],

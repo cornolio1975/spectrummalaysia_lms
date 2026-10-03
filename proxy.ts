@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public routes
-  const publicPaths = ["/login", "/forgot-password", "/verify", "/about", "/api"];
+  const publicPaths = ["/login", "/register", "/forgot-password", "/verify", "/about", "/api", "/auth"];
   const isPublicPath = publicPaths.some((p) => pathname.startsWith(p));
 
   // Redirect unauthenticated users away from protected routes
@@ -23,7 +23,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  if (user && (pathname === "/login" || pathname === "/forgot-password")) {
+  if (user && (pathname === "/login" || pathname === "/register" || pathname === "/forgot-password")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

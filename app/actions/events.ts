@@ -14,11 +14,11 @@ export async function getEvents() {
       programmes (programme_name, programme_code),
       nadi_sites (site_name)
     `)
-    .order("start_date", { ascending: false });
+    .order("event_date", { ascending: false });
 
   if (error) {
-    console.error("Error fetching events:", error);
-    return { error: error.message };
+    console.error("Error fetching events:", JSON.stringify(error, null, 2));
+    return { error: error.message || JSON.stringify(error) };
   }
 
   return { data };

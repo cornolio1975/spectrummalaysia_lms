@@ -1,4 +1,4 @@
-export type Role = 'super_admin' | 'admin' | 'trainer' | 'learner' | 'observer';
+export type Role = 'super_admin' | 'admin' | 'trainer' | 'learner' | 'observer' | 'guest';
 
 export type Permission = 
   | 'admin.dashboard.view'
@@ -83,7 +83,8 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     // 'observer.export' - Explicitly omitted by default based on strict requirement
   ],
   trainer: [], // Trainer permissions handled in trainer nav space
-  learner: []  // Learner permissions handled in learner nav space
+  learner: [],  // Learner permissions handled in learner nav space
+  guest: []     // Guest gets no permissions
 };
 
 /**

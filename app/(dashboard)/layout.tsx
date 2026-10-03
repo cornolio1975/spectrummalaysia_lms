@@ -21,9 +21,14 @@ export default async function DashboardLayout({
   // Fetch basic profile info
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, account_status")
     .eq("id", user.id)
     .single();
+
+  // Route protection for guests / pending accounts
+  if (profile?.role === "guest" || profile?.account_status === "pending") {
+    redirect("/pending");
+  }
 
   return (
     <DashboardShell

@@ -3,8 +3,7 @@ import { createClient } from '@/utils/supabase/server';
 import { cookies } from 'next/headers';
 
 export default async function AdminSignupsPage() {
-  const cookieStore = await cookies();
-  const supabase = await createClient(cookieStore);
+  const supabase = await createClient();
   
   // Fetch pending profiles
   const { data: signups } = await supabase
