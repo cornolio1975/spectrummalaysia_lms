@@ -236,7 +236,19 @@ export function TrainerProfileClient({ trainer, credentials, documents, assignme
                       {assignments.map((assignment: any) => (
                         <tr key={assignment.id}>
                           <td className="px-4 py-3 font-medium text-gray-900">
-                            {assignment.programmes?.programme_name || assignment.courses?.title || "Unknown"}
+                            {assignment.courses ? (
+                              <div>
+                                <span className="font-semibold text-slate-900">[{assignment.courses.course_code}]</span> {assignment.courses.title}
+                                <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">Micro-credential</span>
+                              </div>
+                            ) : assignment.programmes ? (
+                              <div>
+                                <span className="font-semibold text-slate-900">[{assignment.programmes.programme_code}]</span> {assignment.programmes.programme_name}
+                                <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Programme</span>
+                              </div>
+                            ) : (
+                              "Unknown"
+                            )}
                           </td>
                           <td className="px-4 py-3 text-gray-600">{assignment.role}</td>
                           <td className="px-4 py-3 text-gray-600">

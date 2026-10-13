@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const programmeSchema = z.object({
-  programme_code: z.string().min(3).max(20),
+  programme_code: z.string().min(3).max(30),
   programme_name: z.string().min(3).max(100),
   description: z.string().optional(),
   category: z.string().optional(),

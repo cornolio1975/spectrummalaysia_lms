@@ -114,7 +114,7 @@ export async function getTrainerCourseAssignments() {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("trainer_course_assignments")
-    .select("*, trainers(id, name), programmes(id, programme_name), courses(id, title), nadi_sites(id, site_name)")
+    .select("*, trainers(id, name), programmes(id, programme_code, programme_name), courses(id, course_code, title), nadi_sites(id, site_name)")
     .order("created_at", { ascending: false });
   return { data, error: error?.message };
 }

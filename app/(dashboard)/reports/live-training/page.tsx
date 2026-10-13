@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getLiveTrainingReport } from "@/app/actions/live-attendance";
 import { getProgrammes } from "@/app/actions/programmes";
 import { getTrainers } from "@/app/actions/trainers";
+import { ExportCsvButton } from "@/components/reports/export-csv-button";
 
 export const metadata: Metadata = { title: "Live Training Report" };
 
@@ -41,7 +42,9 @@ export default async function LiveTrainingReportPage({
             <select name="programme_id" className="form-select" defaultValue={sp.programme_id || ""}>
               <option value="">All Programmes</option>
               {programmes.map((p: any) => (
-                <option key={p.id} value={p.id}>{p.programme_name}</option>
+                <option key={p.id} value={p.id}>
+                  [{p.programme_code || 'PROG'}] {p.programme_name}
+                </option>
               ))}
             </select>
           </div>
@@ -69,9 +72,7 @@ export default async function LiveTrainingReportPage({
       <div className="card p-0">
         <div className="p-4 border-b flex justify-between items-center">
           <h3 className="m-0 text-lg">Report Results ({report.length} classes)</h3>
-          <button className="btn btn-outline btn-sm" onClick={() => alert("CSV Export coming soon")}>
-            Export CSV
-          </button>
+          <ExportCsvButton data={report} />
         </div>
         
         <table className="data-table w-full text-sm">

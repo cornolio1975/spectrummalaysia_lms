@@ -37,7 +37,7 @@ export default async function TrainerProfilePage({
   // Fetch related data
   const { data: credentials } = await supabase.from("trainer_credentials").select("*").eq("trainer_id", trainerId);
   const { data: documents } = await supabase.from("trainer_documents").select("*").eq("trainer_id", trainerId);
-  const { data: assignments } = await supabase.from("trainer_course_assignments").select("*, programmes(id, programme_name), courses(id, title)").eq("trainer_id", trainerId);
+  const { data: assignments } = await supabase.from("trainer_course_assignments").select("*, programmes(id, programme_code, programme_name), courses(id, course_code, title)").eq("trainer_id", trainerId);
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">

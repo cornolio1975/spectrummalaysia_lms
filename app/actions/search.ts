@@ -23,6 +23,8 @@ export async function universalGlobalSearch(query: string): Promise<{ data: Glob
       supabase
         .from("courses")
         .select("id, title, course_code, level")
+        .neq("status", "archived")
+        .eq("is_archived", false)
         .ilike("title", `%${cleanQuery}%`)
         .limit(5),
       supabase

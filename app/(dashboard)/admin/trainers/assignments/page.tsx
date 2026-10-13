@@ -24,8 +24,8 @@ export default async function AssignmentsPage() {
     getTrainers(),
     supabase.from("nadi_sites").select("id, site_name").order("site_name"),
     supabase.from("states").select("id, state_name").order("state_name"),
-    supabase.from("programmes").select("id, programme_name").order("programme_name"),
-    supabase.from("courses").select("id, title").order("title"),
+    supabase.from("programmes").select("id, programme_code, programme_name, category").order("programme_code"),
+    supabase.from("courses").select("id, course_code, title, level, level_designation, programme_id, programmes(id, programme_code, programme_name)").order("course_code"),
     getTrainerNadiAssignments(),
     getTrainerCourseAssignments()
   ]);

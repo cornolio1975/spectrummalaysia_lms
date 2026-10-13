@@ -47,4 +47,10 @@ next-env.d.ts
 
 supabase/.temp/
 scratch-query.ts
-scratch/apply_migration.mjs
+/scratch/
+
+
+*.tar.gz
+*.tgz
+.deploy_temp/
+.source_temp/

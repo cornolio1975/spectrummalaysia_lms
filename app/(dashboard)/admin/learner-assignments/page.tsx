@@ -29,6 +29,7 @@ export default function LearnerAssignmentsPage() {
         .from('courses')
         .select('id, title')
         .eq('status', 'published')
+        .eq('is_archived', false)
         .order('title');
         
       if (coursesData) setCourses(coursesData);

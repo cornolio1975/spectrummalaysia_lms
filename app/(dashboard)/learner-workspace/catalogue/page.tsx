@@ -14,6 +14,7 @@ export default async function LearnerCataloguePage() {
       .from('courses')
       .select('*, training_categories(name)')
       .eq('status', 'published')
+      .eq('is_archived', false)
       .order('created_at', { ascending: false });
 
     if (error) throw error;

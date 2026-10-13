@@ -1,0 +1,16 @@
+TransactionID,TransactionDate,CustomerID,CustomerName,State,NADICentre,ProductCategory,ProductName,UnitPrice_MYR,Quantity,GrossRevenue_MYR,Discount_MYR,NetRevenue_MYR,PaymentMethod
+TRX-2026-001,15/01/2026,CUST-101,Ahmad Razali,Selangor,NADI Sungai Besar,Food & Beverage,Sambal Garing Che Nor,18.00,3,54.00,0.00,54.00,DuitNow QR
+TRX-2026-002,15/01/2026,CUST-102,Nurul Huda,Johor,NADI Felda Air Tawar 4,Handicraft,Batik Canting Scarf,65.00,1,65.00,5.00,60.00,Online Banking
+TRX-2026-003,16/01/2026,CUST-103,Tan Wei Ming,kuala lumpur ,NADI PPR Kerinchi,Digital Services,Canva Social Media Design,120.00,1,120.00,10.00,110.00,Credit Card
+TRX-2026-004,16/01/2026,CUST-104,Siti Aminah,Kedah,NADI Yan,Food & Beverage,Kerepek Pisang Tanduk,12.00,5,60.00,0.00,60.00,Cash
+TRX-2026-005,17/01/2026,CUST-105,Muthu Samy,Penang,NADI Balik Pulau,Agricultural Products,Madu Kelulut Asli,85.00,2,170.00,15.00,155.00,DuitNow QR
+TRX-2026-006,17/01/2026,CUST-106,Fatima Zahra,Kelantan,NADI Tumpat,Handicraft,Songket Pouch Bag,45.00,2,90.00,0.00,90.00,Online Banking
+TRX-2026-007,18/01/2026,CUST-107,Chong Kah Wai,Sabah,NADI Kudat,Digital Services,Shopee Store Banner Setup,250.00,1,250.00,25.00,225.00,Touch n Go eWallet
+TRX-2026-008,18/01/2026,CUST-108,Zulhazmi Harun,Terengganu,NADI Marang,Food & Beverage,Keropok Lekor Crispy,15.00,4,60.00,0.00,60.00,Cash
+TRX-2026-009,19/01/2026,CUST-109,Dayang Zubaidah,Sarawak,NADI Serian,Handicraft,Pua Kumbu Table Runner,130.00,1,130.00,10.00,120.00,DuitNow QR
+TRX-2026-010,19/01/2026,CUST-110,Faridah Osman,Pahang,NADI Rompin,Food & Beverage,Pes Patin Tempoyak,22.00,3,66.00,0.00,66.00,Cash
+TRX-2026-011,20/01/2026,CUST-111,Lee Seng Hock,Perak,NADI Kuala Kangsar,Agricultural Products,Baja Bio Organik,35.00,4,140.00,10.00,130.00,Online Banking
+TRX-2026-012,20/01/2026,CUST-112,Mohd Afiq,Melaka,NADI Alor Gajah,Food & Beverage,Dodol Melaka Asli,16.00,5,80.00,5.00,75.00,DuitNow QR
+TRX-2026-013,21/01/2026,CUST-113,Siti Mariam,Perlis,NADI Padang Besar,Handicraft,Tote Bag Anyaman Mengkuang,38.00,2,76.00,0.00,76.00,Cash
+TRX-2026-014,21/01/2026,CUST-114,Kavitha Nair,Negeri Sembilan,NADI Pedas,Digital Services,TikTok Shop Affiliate Setup,180.00,1,180.00,20.00,160.00,Online Banking
+TRX-2026-015,22/01/2026,CUST-115,Hariz Daniel,Selangor,NADI Sungai Pelek,Food & Beverage,Kopi Kampung Robusta,25.00,3,75.00,0.00,75.00,DuitNow QR

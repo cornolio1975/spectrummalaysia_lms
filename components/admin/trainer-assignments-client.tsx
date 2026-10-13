@@ -78,6 +78,16 @@ export function TrainerAssignmentsClient({
     router.refresh();
   };
 
+  // Group courses by programme
+  const coursesByProg = (courses || []).reduce((acc: any, c: any) => {
+    const progKey = c.programmes?.programme_name 
+      ? `[${c.programmes.programme_code}] ${c.programmes.programme_name}`
+      : (c.programme_id ? "Associated Programme" : "Stand-alone Micro-Credentials");
+    if (!acc[progKey]) acc[progKey] = [];
+    acc[progKey].push(c);
+    return acc;
+  }, {});
+
   return (
     <div>
       <div className="flex gap-4 border-b border-gray-200 mb-6">
@@ -136,7 +146,7 @@ export function TrainerAssignmentsClient({
             <thead>
               <tr className="bg-gray-50">
                 <th className="p-4 text-left font-medium text-gray-500">Trainer</th>
-                <th className="p-4 text-left font-medium text-gray-500">Course</th>
+                <th className="p-4 text-left font-medium text-gray-500">Course / Programme</th>
                 <th className="p-4 text-left font-medium text-gray-500">Role</th>
                 <th className="p-4 text-left font-medium text-gray-500">NADI Site</th>
                 <th className="p-4 text-left font-medium text-gray-500">Start Date</th>
@@ -148,8 +158,19 @@ export function TrainerAssignmentsClient({
                 <tr key={row.id} className="border-t border-gray-100">
                   <td className="p-4 font-medium text-primary-600">{row.trainers?.name}</td>
                   <td className="p-4">
-                    {row.programmes?.programme_name || row.courses?.title || "-"}
-                    {row.courses && <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Micro-credential</span>}
+                    {row.courses ? (
+                      <div>
+                        <span className="font-semibold text-slate-900">[{row.courses.course_code}]</span> {row.courses.title}
+                        <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-medium">Micro-credential</span>
+                      </div>
+                    ) : row.programmes ? (
+                      <div>
+                        <span className="font-semibold text-slate-900">[{row.programmes.programme_code}]</span> {row.programmes.programme_name}
+                        <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Programme</span>
+                      </div>
+                    ) : (
+                      "-"
+                    )}
                   </td>
                   <td className="p-4">{row.role}</td>
                   <td className="p-4">{row.nadi_sites?.site_name || "All"}</td>
@@ -210,13 +231,23 @@ export function TrainerAssignmentsClient({
                   <div>
                     <label className="block text-sm font-medium mb-1">Course / Programme *</label>
                     <select name="programme_or_course" required className="form-select w-full">
-                      <option value="">Select Course...</option>
-                      <optgroup label="Programmes">
-                        {programmes?.map((p: any) => <option key={p.id} value={`prog_${p.id}`}>{p.programme_name}</option>)}
+                      <option value="">Select Course or Programme...</option>
+                      <optgroup label="── PROGRAMMES (Parent Tracks) ──">
+                        {programmes?.map((p: any) => (
+                          <option key={p.id} value={`prog_${p.id}`}>
+                            [{p.programme_code || 'PROG'}] {p.programme_name}
+                          </option>
+                        ))}
                       </optgroup>
-                      <optgroup label="Micro-credential Courses">
-                        {courses?.map((c: any) => <option key={c.id} value={`course_${c.id}`}>{c.title}</option>)}
-                      </optgroup>
+                      {Object.entries(coursesByProg).map(([progLabel, courseList]: [string, any]) => (
+                        <optgroup key={progLabel} label={`── ${progLabel} ──`}>
+                          {courseList.map((c: any) => (
+                            <option key={c.id} value={`course_${c.id}`}>
+                              [{c.course_code}] {c.title} {c.level_designation ? `(${c.level_designation})` : ''}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ))}
                     </select>
                   </div>
                   <div>

@@ -25,13 +25,40 @@ if (Test-Path "public") {
   Copy-Item -Recurse -Force "public/*" "$out/public"
 }
 
-# 3. Root entry file expected by Hostinger
+# 3. Root entry files expected by various Hostinger Node.js interfaces (server.js, index.js, app.js)
 Set-Content -Path "$out/index.js" -Value "require('./server.js');" -Encoding UTF8
+Set-Content -Path "$out/app.js" -Value "require('./server.js');" -Encoding UTF8
 
-# 4. Zip with files at the archive root
-if (Test-Path "dist.zip") { Remove-Item -Force "dist.zip" }
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-[System.IO.Compression.ZipFile]::CreateFromDirectory((Resolve-Path $out), (Join-Path $root "dist.zip"))
+# 4. Hostinger LiteSpeed / Phusion Passenger restart dir
+New-Item -ItemType Directory -Force -Path "$out/tmp" | Out-Null
+Set-Content -Path "$out/tmp/.keep" -Value "" -Encoding UTF8
+
+# 5. Hostinger Passenger configuration .htaccess
+$htaccessContent = @"
+PassengerAppRoot /home/u286655953/domains/spectrummalaysia.org/public_html/lms
+PassengerAppType node
+PassengerNodejs /opt/alt/alt-nodejs22/root/bin/node
+PassengerStartupFile server.js
+PassengerBaseURI /
+PassengerRestartDir /home/u286655953/domains/spectrummalaysia.org/public_html/lms/tmp
+SetEnv LSNODE_CONSOLE_LOG console.log
+SetEnv TOKIO_WORKER_THREADS 2
+"@
+Set-Content -Path "$out/.htaccess" -Value $htaccessContent -Encoding UTF8
+
+# 6. Clean any sensitive or temp files
+Get-ChildItem -Path $out -Recurse -Include ".env*", "*.zip", "*.log" | Remove-Item -Force
+
+# 5. Zip with files at the archive root using bsdtar (standard POSIX forward slashes)
+$zipPath = Join-Path $root "dist.zip"
+$tarPath = Join-Path $root "dist.tar.gz"
+if (Test-Path $zipPath) { Remove-Item -Force $zipPath }
+if (Test-Path $tarPath) { Remove-Item -Force $tarPath }
+
+Push-Location $out
+tar -a -cf $zipPath *
+tar -czf $tarPath *
+Pop-Location
 
 Remove-Item -Recurse -Force $out
-Write-Host "dist.zip created (entry: index.js -> server.js)"
+Write-Host "dist.zip and dist.tar.gz created successfully with POSIX forward-slash paths."
