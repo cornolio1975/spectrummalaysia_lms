@@ -25,16 +25,19 @@ if (Test-Path "public") {
   Copy-Item -Recurse -Force "public/*" "$out/public"
 }
 
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
 # 3. Root entry files expected by various Hostinger Node.js interfaces (server.js, index.js, app.js)
-Set-Content -Path "$out/index.js" -Value "require('./server.js');" -Encoding UTF8
-Set-Content -Path "$out/app.js" -Value "require('./server.js');" -Encoding UTF8
+[System.IO.File]::WriteAllText("$out/index.js", "require('./server.js');`n", $utf8NoBom)
+[System.IO.File]::WriteAllText("$out/app.js", "require('./server.js');`n", $utf8NoBom)
 
 # 4. Hostinger LiteSpeed / Phusion Passenger restart dir
 New-Item -ItemType Directory -Force -Path "$out/tmp" | Out-Null
-Set-Content -Path "$out/tmp/.keep" -Value "" -Encoding UTF8
+[System.IO.File]::WriteAllText("$out/tmp/.keep", "", $utf8NoBom)
 
 # 5. Hostinger Passenger configuration .htaccess
 $htaccessContent = @"
+PassengerEnabled on
 PassengerAppRoot /home/u286655953/domains/spectrummalaysia.org/public_html/lms
 PassengerAppType node
 PassengerNodejs /opt/alt/alt-nodejs22/root/bin/node
@@ -44,7 +47,7 @@ PassengerRestartDir /home/u286655953/domains/spectrummalaysia.org/public_html/lm
 SetEnv LSNODE_CONSOLE_LOG console.log
 SetEnv TOKIO_WORKER_THREADS 2
 "@
-Set-Content -Path "$out/.htaccess" -Value $htaccessContent -Encoding UTF8
+[System.IO.File]::WriteAllText("$out/.htaccess", $htaccessContent, $utf8NoBom)
 
 # 6. Clean any sensitive or temp files
 Get-ChildItem -Path $out -Recurse -Include ".env*", "*.zip", "*.log" | Remove-Item -Force
