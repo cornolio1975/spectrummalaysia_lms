@@ -332,49 +332,18 @@ export default function Sidebar({ isOpen, onClose, userRole, isCollapsed, onTogg
         {/* Logo / Brand */}
         <div className="sidebar-logo">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <div className={`brand-info ${isCollapsed ? "hidden" : "flex"}`} style={{ display: isCollapsed ? "none" : "flex", alignItems: "center", gap: "12px" }}>
-              <div
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "8px",
-                  background: "rgba(255,255,255,0.15)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "16px",
-                  fontWeight: "800",
-                  color: "#fff",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  flexShrink: 0,
-                }}
-              >
-                N
-              </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: "0.9rem",
-                    fontWeight: "700",
-                    color: "#fff",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  SpectrumMY LMS
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.6rem",
-                    color: role === "observer" ? "#a855f7" : "rgba(255,255,255,0.5)",
-                    letterSpacing: "0.04em",
-                    marginTop: "1px",
-                    fontWeight: role === "observer" ? "bold" : "normal",
-                  }}
-                >
-                  {role === "observer" ? "OBSERVER" : "PROGRAMME & LEARNING"}
-                </div>
-              </div>
-            </div>
+            <a
+              href={process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/"}
+              className={`brand-info ${isCollapsed ? "hidden" : "flex"}`}
+              style={{ display: isCollapsed ? "none" : "flex", alignItems: "center", textDecoration: "none" }}
+              title="Return to SpectrumMalaysia Home"
+            >
+              <img
+                src="/spectrum-logo.png"
+                alt="Spectrum Edu Resources"
+                style={{ height: "40px", width: "auto", objectFit: "contain" }}
+              />
+            </a>
             
             {/* Burger/Toggle Button */}
             <button

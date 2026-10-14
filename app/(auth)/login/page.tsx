@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
+const LANDING_PAGE_URL = process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/";
+
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -93,6 +95,20 @@ export default function LoginPage() {
         pointerEvents: "none",
       }} />
 
+      {/* Floating Home button back to main landing website */}
+      <a
+        href={LANDING_PAGE_URL}
+        className="login-home-btn"
+        aria-label="Back to SpectrumMalaysia Home"
+        title="Return to SpectrumMalaysia Home (spectrummalaysia.org)"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span>Home</span>
+      </a>
+
       {/* Left panel — branding */}
       <div style={{
         flex: 1,
@@ -103,35 +119,28 @@ export default function LoginPage() {
         color: "#fff",
       }} className="login-brand-panel">
         <div style={{ maxWidth: "440px" }}>
-          {/* Logo / Brand mark */}
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "14px",
-            marginBottom: "48px",
-          }}>
-            <div style={{
-              width: "48px",
-              height: "48px",
-              borderRadius: "12px",
-              background: "rgba(255,255,255,0.15)",
-              display: "flex",
+          {/* Logo / Brand mark (clickable to Home) */}
+          <a
+            href={LANDING_PAGE_URL}
+            style={{
+              display: "inline-flex",
               alignItems: "center",
-              justifyContent: "center",
-              fontSize: "22px",
-              fontWeight: "800",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}>N</div>
-            <div>
-              <div style={{ fontSize: "1.1rem", fontWeight: "700", letterSpacing: "-0.01em" }}>
-                SpectrumMY LMS
-              </div>
-              <div style={{ fontSize: "0.72rem", opacity: 0.7, letterSpacing: "0.05em" }}>
-                PROGRAMME & LEARNING MANAGEMENT
-              </div>
-            </div>
-          </div>
+              padding: "8px 16px",
+              borderRadius: "14px",
+              background: "rgba(2, 6, 23, 0.85)",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              marginBottom: "36px",
+              textDecoration: "none",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
+            }}
+            title="Return to SpectrumMalaysia Home"
+          >
+            <img
+              src="/spectrum-logo.png"
+              alt="Spectrum Edu Resources"
+              style={{ height: "56px", width: "auto", objectFit: "contain" }}
+            />
+          </a>
 
           <h1 style={{
             fontSize: "2.5rem",
@@ -183,10 +192,24 @@ export default function LoginPage() {
       }} className="login-form-panel">
         <div style={{ width: "100%", maxWidth: "360px" }}>
           <div style={{ marginBottom: "32px" }}>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: "700", color: "var(--text-primary)", marginBottom: "6px" }}>
-              Sign In
-            </h2>
-            <p style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
+              <h2 style={{ fontSize: "1.5rem", fontWeight: "700", color: "var(--text-primary)", margin: 0 }}>
+                Sign In
+              </h2>
+              <a
+                href={LANDING_PAGE_URL}
+                className="form-home-btn"
+                title="Return to SpectrumMalaysia Home"
+                aria-label="Back to SpectrumMalaysia Home"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span>Home</span>
+              </a>
+            </div>
+            <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", margin: 0 }}>
               Enter your credentials to access the system
             </p>
           </div>
@@ -361,21 +384,70 @@ export default function LoginPage() {
           }}>
             <div>SpectrumMY Programme & Learning Management System</div>
             <div style={{ marginTop: "4px" }}>
-              <a href="/verify" style={{ color: "var(--primary-light)" }}>
-                Verify a Certificate
+              <a href={LANDING_PAGE_URL} style={{ color: "var(--primary-light)", fontWeight: "600" }}>
+                ← Back to Home
               </a>
               {" · "}
-              <a href="/about" style={{ color: "var(--primary-light)" }}>
-                About SpectrumMY
+              <a href="/verify" style={{ color: "var(--primary-light)" }}>
+                Verify a Certificate
               </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Responsive: hide left panel on small screens */}
+      {/* Responsive and styling */}
       <style>{`
+        .login-home-btn {
+          position: absolute;
+          top: 24px;
+          left: 28px;
+          z-index: 50;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 18px;
+          border-radius: 9999px;
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          color: #ffffff;
+          font-size: 0.85rem;
+          font-weight: 600;
+          text-decoration: none;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          transition: all 0.2s ease;
+        }
+        .login-home-btn:hover {
+          background: rgba(255, 255, 255, 0.28);
+          transform: translateY(-1px);
+        }
+        .form-home-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #0d7063;
+          text-decoration: none;
+          padding: 5px 11px;
+          border-radius: 8px;
+          background: rgba(13, 112, 99, 0.08);
+          border: 1px solid rgba(13, 112, 99, 0.18);
+          transition: all 0.15s ease;
+        }
+        .form-home-btn:hover {
+          background: rgba(13, 112, 99, 0.15);
+        }
+        @media (min-width: 901px) {
+          .form-home-btn {
+            display: none;
+          }
+        }
         @media (max-width: 900px) {
+          .login-home-btn {
+            display: none;
+          }
           .login-brand-panel { display: none; }
           .login-form-panel { width: 100%; }
         }

@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Home, Maximize } from "lucide-react";
 
 // The official public landing page
-const LANDING_PAGE_URL = process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org";
+const LANDING_PAGE_URL = process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/";
 
 interface TopbarProps {
   onMenuClick: () => void;

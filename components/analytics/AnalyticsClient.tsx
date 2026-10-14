@@ -1,24 +1,28 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import AnalyticsFilterPanel from "./AnalyticsFilterPanel";
 import AnalyticsKpiCards from "./AnalyticsKpiCards";
 import AnalyticsNadiTable from "./AnalyticsNadiTable";
 
-export default function AnalyticsClient({ filters, filterOptions, initialData }: any) {
+export default function AnalyticsClient({ 
+  filters = {}, 
+  filterOptions = {}, 
+  initialData = {} 
+}: any) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const data = initialData;
+  const data = initialData || {};
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("ALL NADI");
   const [searchQuery, setSearchQuery] = useState("");
   
   // State for last refreshed
-  const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
+  const [lastRefreshed] = useState<Date>(new Date());
 
   const handleFilterChange = (key: string, value: string | null) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(searchParams ? searchParams.toString() : "");
     if (value) {
       params.set(key, value);
     } else {
@@ -32,9 +36,16 @@ export default function AnalyticsClient({ filters, filterOptions, initialData }:
   };
 
   const handleExport = () => {
-    // In a real implementation, this would trigger a CSV download.
     alert("Export functionality triggered with active filters.");
   };
+
+  const kpis = data?.kpis || { totalEvents: 0, totalNadi: 0, totalPax: 0, totalParticipation: 0 };
+  const nadiRows = data?.nadiRows || [];
+  const stateRows = data?.stateRows || [];
+  const programmes = data?.programmes || [];
+  const quarters = data?.quarters || [];
+  const months = data?.months || [];
+  const weeks = data?.weeks || [];
 
   return (
     <div className="flex h-[calc(100vh-60px)] bg-slate-50 overflow-hidden text-sm">
@@ -99,7 +110,7 @@ export default function AnalyticsClient({ filters, filterOptions, initialData }:
 
           {/* KPI Cards */}
           <div className="mb-6">
-            <AnalyticsKpiCards kpis={data.kpis} />
+            <AnalyticsKpiCards kpis={kpis} />
           </div>
 
           {/* Search & Actions Bar */}
@@ -129,40 +140,40 @@ export default function AnalyticsClient({ filters, filterOptions, initialData }:
         <div className="bg-white rounded-t-xl shadow-sm border-t border-l border-r border-gray-200 flex-1 min-h-0 flex flex-col mt-2">
           {activeTab === "ALL NADI" && (
             <AnalyticsNadiTable 
-              rows={data.nadiRows} 
-              columns={data.programmes} 
+              rows={nadiRows} 
+              columns={programmes} 
               dataKey="programmes"
               searchQuery={searchQuery}
             />
           )}
           {activeTab === "QUARTERLY" && (
             <AnalyticsNadiTable 
-              rows={data.nadiRows} 
-              columns={data.quarters} 
+              rows={nadiRows} 
+              columns={quarters} 
               dataKey="quarterly"
               searchQuery={searchQuery}
             />
           )}
           {activeTab === "MONTHLY" && (
             <AnalyticsNadiTable 
-              rows={data.nadiRows} 
-              columns={data.months} 
+              rows={nadiRows} 
+              columns={months} 
               dataKey="monthly"
               searchQuery={searchQuery}
             />
           )}
           {activeTab === "WEEKLY" && (
             <AnalyticsNadiTable 
-              rows={data.nadiRows} 
-              columns={data.weeks} 
+              rows={nadiRows} 
+              columns={weeks} 
               dataKey="weekly"
               searchQuery={searchQuery}
             />
           )}
           {activeTab === "SUMMARY BY STATE" && (
             <AnalyticsNadiTable 
-              rows={data.stateRows} 
-              columns={data.programmes} 
+              rows={stateRows} 
+              columns={programmes} 
               dataKey="programmes"
               searchQuery={searchQuery}
             />

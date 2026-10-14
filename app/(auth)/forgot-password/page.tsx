@@ -69,10 +69,14 @@ export default function ForgotPasswordPage() {
           </button>
         </form>
         
-        <div className="mt-6 text-center">
-          <Link href="/login" className="text-sm text-blue-600 hover:underline">
+        <div className="mt-6 text-center space-x-3 text-sm">
+          <Link href="/login" className="text-blue-600 hover:underline">
             Back to Login
           </Link>
+          <span className="text-gray-400">·</span>
+          <a href={process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/"} className="text-gray-600 hover:text-gray-900 font-medium">
+            ← Home
+          </a>
         </div>
       </div>
     </div>

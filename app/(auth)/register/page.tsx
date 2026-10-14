@@ -83,9 +83,14 @@ export default function RegisterPage() {
           <p className="mb-6 text-lg">
             Registration successful. Your account has been created as Guest and is currently pending Admin approval. Your LMS role and access will be activated after Admin review.
           </p>
-          <a href="/login" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded transition-colors">
-            Return to Login
-          </a>
+          <div className="flex justify-center gap-4">
+            <a href="/login" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded transition-colors">
+              Return to Login
+            </a>
+            <a href={process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/"} className="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded transition-colors">
+              Home
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -93,7 +98,19 @@ export default function RegisterPage() {
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">CREATE NEW ACCOUNT</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">CREATE NEW ACCOUNT</h1>
+        <a
+          href={process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/"}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </a>
+      </div>
       
       <div className="mb-8 p-4 bg-gray-50 border rounded-lg text-sm text-gray-600">
         <p className="font-semibold mb-2">Registration Process:</p>
