@@ -125,20 +125,20 @@ export default function LoginPage() {
             style={{
               display: "inline-flex",
               alignItems: "center",
-              padding: "8px 16px",
+              padding: "10px 18px",
               borderRadius: "14px",
-              background: "rgba(2, 6, 23, 0.85)",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
+              background: "#ffffff",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
               marginBottom: "36px",
               textDecoration: "none",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.35)",
+              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.25)",
             }}
-            title="Return to SpectrumMalaysia Home"
+            title="Spectrum Edu Resources"
           >
             <img
               src="/spectrum-logo.png"
               alt="Spectrum Edu Resources"
-              style={{ height: "56px", width: "auto", objectFit: "contain" }}
+              style={{ height: "54px", width: "auto", objectFit: "contain" }}
             />
           </a>
 

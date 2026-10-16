@@ -1,0 +1,9 @@
+PassengerEnabled on
+PassengerAppRoot /home/u286655953/domains/spectrummalaysia.org/public_html/lms
+PassengerAppType node
+PassengerNodejs /opt/alt/alt-nodejs22/root/bin/node
+PassengerStartupFile server.js
+PassengerBaseURI /
+PassengerRestartDir /home/u286655953/domains/spectrummalaysia.org/public_html/lms/tmp
+SetEnv LSNODE_CONSOLE_LOG console.log
+SetEnv TOKIO_WORKER_THREADS 2

@@ -330,18 +330,28 @@ export default function Sidebar({ isOpen, onClose, userRole, isCollapsed, onTogg
 
       <aside className={`sidebar${isOpen ? " open" : ""}${isCollapsed ? " collapsed" : ""}`}>
         {/* Logo / Brand */}
-        <div className="sidebar-logo">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="sidebar-logo" style={{ padding: "16px 16px 14px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
             <a
-              href={process.env.NEXT_PUBLIC_LANDING_PAGE_URL || "https://spectrummalaysia.org/"}
+              href="https://spectrummalaysia.org/"
               className={`brand-info ${isCollapsed ? "hidden" : "flex"}`}
-              style={{ display: isCollapsed ? "none" : "flex", alignItems: "center", textDecoration: "none" }}
-              title="Return to SpectrumMalaysia Home"
+              style={{
+                display: isCollapsed ? "none" : "flex",
+                alignItems: "center",
+                textDecoration: "none",
+                background: "#ffffff",
+                padding: "6px 12px",
+                borderRadius: "10px",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
+                flex: 1,
+                maxWidth: "190px",
+              }}
+              title="Spectrum Edu Resources"
             >
               <img
                 src="/spectrum-logo.png"
                 alt="Spectrum Edu Resources"
-                style={{ height: "40px", width: "auto", objectFit: "contain" }}
+                style={{ height: "46px", width: "100%", objectFit: "contain" }}
               />
             </a>
             

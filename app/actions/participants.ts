@@ -4,7 +4,30 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function getParticipants() {
   const supabase = await createClient();
+  
+  // Try rich query with enrolments first
   const { data, error } = await supabase
+    .from("participants")
+    .select(`
+      *,
+      states (state_name),
+      nadi_sites (site_name),
+      course_enrolments (
+        id,
+        status,
+        progress_pct,
+        enrolled_at,
+        courses (id, title, course_code)
+      )
+    `)
+    .order("created_at", { ascending: false });
+
+  if (!error && data) {
+    return { data };
+  }
+
+  // Fallback if joined relationship is restricted
+  const fallback = await supabase
     .from("participants")
     .select(`
       *,
@@ -13,11 +36,11 @@ export async function getParticipants() {
     `)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    return { error: error.message };
+  if (fallback.error) {
+    return { error: fallback.error.message };
   }
 
-  return { data };
+  return { data: fallback.data };
 }
 
 export async function getParticipantById(id: string) {

@@ -1,87 +1,38 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getParticipants } from "@/app/actions/participants";
+import { getLearnerInterventions } from "@/app/actions/interventions";
+import { getCourses } from "@/app/actions/courses";
+import { getNadiSites } from "@/app/actions/nadi";
+import { LearnerManagementClient } from "@/components/learner/LearnerManagementClient";
 
-export const metadata: Metadata = { title: "Participants" };
+export const metadata: Metadata = { 
+  title: "Learner Management Hub | SpectrumMY",
+  description: "Enterprise learner directory, cohort tracking, NADI center enrolments, and retention intervention radar."
+};
+
+export const dynamic = "force-dynamic";
 
 export default async function ParticipantsPage() {
-  const { data: participants, error } = await getParticipants();
+  const [participantsRes, interventionsRes, coursesRes, nadiSitesRes] = await Promise.all([
+    getParticipants(),
+    getLearnerInterventions(),
+    getCourses({ includeArchived: false }),
+    getNadiSites(),
+  ]);
+
+  const participants = participantsRes.data || [];
+  const openInterventions = (interventionsRes.data || []).filter((i: any) => i.status === "open");
+  const courses = coursesRes.data || [];
+  const nadiSites = nadiSitesRes.data || [];
 
   return (
-    <div>
-      <div className="page-header">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div>
-            <h1>Participants</h1>
-            <p>Manage all programme participants</p>
-          </div>
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button className="btn btn-outline btn-sm">⬆ Import CSV</button>
-            <Link href="/participants/new" className="btn btn-primary btn-sm">+ Add Participant</Link>
-          </div>
-        </div>
-      </div>
-      <div className="page-body">
-        <div className="card" style={{ padding: "0" }}>
-          <div className="filter-bar" style={{ margin: 0, border: "none", borderBottom: "1px solid var(--border)", borderRadius: 0 }}>
-            <div className="search-input-wrap">
-              <span className="search-icon">🔍</span>
-              <input className="form-input" placeholder="Search by name, IC, or participant ID…" />
-            </div>
-          </div>
-          
-          {error ? (
-            <div className="p-8 text-center text-red-500">Error loading participants: {error}</div>
-          ) : (
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Full Name</th>
-                  <th>Gender</th>
-                  <th>NADI Site</th>
-                  <th>State</th>
-                  <th>Status</th>
-                  <th>Registered</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {participants && participants.length > 0 ? (
-                  participants.map((p: any) => (
-                    <tr key={p.id}>
-                      <td style={{ fontWeight: 500 }}>
-                        {p.full_name}
-                        <div className="text-xs text-gray-500">{p.email || p.phone}</div>
-                      </td>
-                      <td>
-                        <span className={`badge ${p.gender === "female" ? "badge-info" : "badge-neutral"}`}>
-                          {p.gender}
-                        </span>
-                      </td>
-                      <td style={{ fontSize: "0.82rem" }}>{p.nadi_sites?.site_name || "-"}</td>
-                      <td style={{ fontSize: "0.82rem" }}>{p.states?.state_name || "-"}</td>
-                      <td><span className="badge badge-success">{p.status}</span></td>
-                      <td style={{ fontSize: "0.78rem", color: "var(--text-muted)" }}>
-                        {new Date(p.created_at).toLocaleDateString()}
-                      </td>
-                      <td>
-                        <div style={{ display: "flex", gap: "4px" }}>
-                          <Link href={`/participants/${p.id}/edit`} className="btn btn-ghost btn-sm">Edit</Link>
-                          <Link href={`/admin/learner-assignments?userId=${p.id}`} className="btn btn-outline btn-sm text-indigo-600 border-indigo-200 hover:bg-indigo-50">Assign</Link>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={7} className="text-center p-8 text-gray-500">No participants found.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </div>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      <LearnerManagementClient
+        participants={participants}
+        openInterventions={openInterventions}
+        courses={courses}
+        nadiSites={nadiSites}
+      />
     </div>
   );
 }
